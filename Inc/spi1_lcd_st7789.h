@@ -16,7 +16,6 @@
 //#define ST7789_BLK_ON()         (GPIOB->BSRR = (1U << 0))
 //#define ST7789_BLK_OFF()        (GPIOB->BRR  = (1U << 0))
 //
-//// --- Khai báo hàm ---
 //void ST7789_Init(void);
 //void ST7789_SendCommand(uint8_t cmd);
 //void ST7789_SendData(uint8_t data);

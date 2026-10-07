@@ -38,7 +38,7 @@ int main(void) {
 
 	ESP8266_MQTT_Update();
 
-	UART_Process_MQTT_Payload();
+
 
 	UART_Process_MQTT_Publish();
 

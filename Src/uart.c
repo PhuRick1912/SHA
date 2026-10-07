@@ -71,31 +71,7 @@ void USART1_IRQHandler(void) {
     }
 }
 
-void UART_Process_MQTT_Payload(void) {
-    char payload_cmd[50];
-    uint8_t index = 0;
 
-    while (tail_ptr != head_ptr) {
-        char c = rx_ring_buffer[tail_ptr];
-
-        if (index < 49) {
-            payload_cmd[index++] = c;
-        }
-        tail_ptr = (tail_ptr + 1) % RX_RING_SIZE;
-    }
-
-    if (index > 0) {
-        payload_cmd[index] = '\0';
-
-        if (strstr(payload_cmd, "ON") != NULL) {
-            relay_set_state(RELAY_ON);
-
-        }
-        else if (strstr(payload_cmd, "OFF") != NULL) {
-            relay_set_state(RELAY_OFF);
-        }
-    }
-}
 
 
 static char app_rx_buffer[RX_RING_SIZE];

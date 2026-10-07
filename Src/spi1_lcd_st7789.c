@@ -250,34 +250,32 @@ void ILI9341_Init(void) {
     ILI9341_SendCommand(0x29); // Display ON
     Delay_ms(20);
 
-    // 8. Bật đèn nền
+
     ILI9341_BLK_ON();
 }
 
 void ILI9341_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
-    // Cài đặt địa chỉ cột (Column Address Set)
+
     ILI9341_SendCommand(0x2A);
     ILI9341_SendData(x0 >> 8);
     ILI9341_SendData(x0 & 0xFF);
     ILI9341_SendData(x1 >> 8);
     ILI9341_SendData(x1 & 0xFF);
 
-    // Cài đặt địa chỉ hàng (Row Address Set)
+
     ILI9341_SendCommand(0x2B);
     ILI9341_SendData(y0 >> 8);
     ILI9341_SendData(y0 & 0xFF);
     ILI9341_SendData(y1 >> 8);
     ILI9341_SendData(y1 & 0xFF);
 
-    // Lệnh chuẩn bị ghi RAM (Memory Write)
+
     ILI9341_SendCommand(0x2C);
 }
 void ILI9341_FillColor(uint16_t color) {
     uint8_t color_high = color >> 8;
     uint8_t color_low = color & 0xFF;
 
-    // Tăng Buffer lên 10 dòng ngang (240 pixels * 2 bytes * 10 lines = 4800 bytes)
-    // Tốn ~4.6KB RAM (hoàn toàn an toàn trong ngưỡng 20KB của MCU)
     uint8_t dma_buffer[4800];
     for(uint16_t i = 0; i < 4800; i += 2) {
         dma_buffer[i] = color_high;
@@ -289,7 +287,7 @@ void ILI9341_FillColor(uint16_t color) {
     ILI9341_DC_DATA();
     ILI9341_CS_SELECT();
 
-    // 320 dòng / 10 dòng mỗi chunk = 32 lần đẩy DMA (giảm từ 320 xuống 32 lần)
+
     for(uint16_t chunk = 0; chunk < 32; chunk++) {
         spi1_dma_transmit(dma_buffer, 4800);
         spi1_dma_wait_complete();

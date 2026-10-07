@@ -14,7 +14,7 @@
 
 void UART1_DMA_Init(void);
 void UART1_DMA_Transmit(uint8_t *data, uint16_t len);
-void UART_Process_MQTT_Payload(void);
+
 
 // Các hàm API để tầng Application lấy dữ liệu
 bool UART1_Is_Data_Ready(void);

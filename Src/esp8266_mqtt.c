@@ -148,7 +148,7 @@ void ESP8266_MQTT_Update(void) {
                                 if (UART1_Is_Data_Ready()) {
                                     char* rx_buf = (char*)UART1_Get_Rx_Buffer();
 
-                                    // Chuỗi từ ESP nhả ra có định dạng: +MQTTSUBRECV:0,"home/app/commands",... ,ON
+
                                     if (strstr(rx_buf, "+MQTTSUBRECV") != NULL) {
 
                                         // Tìm kiếm Payload lệnh thực thi
@@ -168,7 +168,7 @@ void ESP8266_MQTT_Update(void) {
                                         }
                                     }
 
-                                    // Luôn dọn dẹp cờ và buffer sau khi xử lý xong một chuỗi
+
                                     UART1_Clear_Rx_Buffer();
                                     UART1_Clear_Data_Flag();
                                 }
@@ -180,7 +180,7 @@ void ESP8266_MQTT_Update(void) {
                                     retry_count++;
                                     current_esp_state = ESP_STATE_INIT; // Reset quy trình
                                 } else {
-                                    // Hard Reset ESP8266 thông qua chân EN (Nếu có nối dây)
+                                    // Hard Reset ESP8266 thông qua chân EN
                                     // Hoặc gửi "AT+RST\r\n"
                                     Send_AT_Command("AT+RST\r\n", ESP_STATE_WAIT_INIT);
                                     retry_count = 0;
@@ -197,7 +197,7 @@ void UART_Process_MQTT_Publish(void) {
         // (Tránh ghi đè buffer TX khi ESP8266 đang bận xử lý)
         if ((DMA1_Channel4->CCR & (1U << 0)) == 0) { // DMA_CCR4_EN == 0
 
-            flag_relay_changed = false; // Lập tức xóa cờ để chờ sự kiện tiếp theo
+            flag_relay_changed = false;
 
             if (current_relay_state == RELAY_ON) {
                 const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"ON\",1,0\r\n";
