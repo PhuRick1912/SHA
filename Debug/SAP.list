@@ -1,0 +1,3205 @@
+
+SAP.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .isr_vector   00000130  08000000  08000000  00001000  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .text         000013e8  08000130  08000130  00001130  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000190  08001518  08001518  00002518  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .ARM.extab    00000000  080016a8  080016a8  000026b8  2**0
+                  CONTENTS, READONLY
+  4 .ARM          00000008  080016a8  080016a8  000026a8  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  5 .preinit_array 00000000  080016b0  080016b8  000026b8  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  6 .init_array   00000004  080016b0  080016b0  000026b0  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  7 .fini_array   00000004  080016b4  080016b4  000026b4  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  8 .data         00000000  20000000  20000000  000026b8  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .bss          00000238  20000000  080016b8  00003000  2**2
+                  ALLOC
+ 10 ._user_heap_stack 00000600  20000238  080016b8  00003238  2**0
+                  ALLOC
+ 11 .ARM.attributes 00000029  00000000  00000000  000026b8  2**0
+                  CONTENTS, READONLY
+ 12 .debug_info   0000251c  00000000  00000000  000026e1  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 13 .debug_abbrev 00000c35  00000000  00000000  00004bfd  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 14 .debug_aranges 00000240  00000000  00000000  00005838  2**3
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 15 .debug_rnglists 0000018b  00000000  00000000  00005a78  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 16 .debug_macro  0001130e  00000000  00000000  00005c03  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 17 .debug_line   00003ad7  00000000  00000000  00016f11  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 18 .debug_str    000584df  00000000  00000000  0001a9e8  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 19 .comment      00000043  00000000  00000000  00072ec7  2**0
+                  CONTENTS, READONLY
+ 20 .debug_frame  0000068c  00000000  00000000  00072f0c  2**2
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+ 21 .debug_line_str 00000036  00000000  00000000  00073598  2**0
+                  CONTENTS, READONLY, DEBUGGING, OCTETS
+
+Disassembly of section .text:
+
+08000130 <__do_global_dtors_aux>:
+ 8000130:	b510      	push	{r4, lr}
+ 8000132:	4c05      	ldr	r4, [pc, #20]	@ (8000148 <__do_global_dtors_aux+0x18>)
+ 8000134:	7823      	ldrb	r3, [r4, #0]
+ 8000136:	b933      	cbnz	r3, 8000146 <__do_global_dtors_aux+0x16>
+ 8000138:	4b04      	ldr	r3, [pc, #16]	@ (800014c <__do_global_dtors_aux+0x1c>)
+ 800013a:	b113      	cbz	r3, 8000142 <__do_global_dtors_aux+0x12>
+ 800013c:	4804      	ldr	r0, [pc, #16]	@ (8000150 <__do_global_dtors_aux+0x20>)
+ 800013e:	f3af 8000 	nop.w
+ 8000142:	2301      	movs	r3, #1
+ 8000144:	7023      	strb	r3, [r4, #0]
+ 8000146:	bd10      	pop	{r4, pc}
+ 8000148:	20000000 	.word	0x20000000
+ 800014c:	00000000 	.word	0x00000000
+ 8000150:	08001500 	.word	0x08001500
+
+08000154 <frame_dummy>:
+ 8000154:	b508      	push	{r3, lr}
+ 8000156:	4b03      	ldr	r3, [pc, #12]	@ (8000164 <frame_dummy+0x10>)
+ 8000158:	b11b      	cbz	r3, 8000162 <frame_dummy+0xe>
+ 800015a:	4903      	ldr	r1, [pc, #12]	@ (8000168 <frame_dummy+0x14>)
+ 800015c:	4803      	ldr	r0, [pc, #12]	@ (800016c <frame_dummy+0x18>)
+ 800015e:	f3af 8000 	nop.w
+ 8000162:	bd08      	pop	{r3, pc}
+ 8000164:	00000000 	.word	0x00000000
+ 8000168:	20000004 	.word	0x20000004
+ 800016c:	08001500 	.word	0x08001500
+
+08000170 <strlen>:
+ 8000170:	4603      	mov	r3, r0
+ 8000172:	f813 2b01 	ldrb.w	r2, [r3], #1
+ 8000176:	2a00      	cmp	r2, #0
+ 8000178:	d1fb      	bne.n	8000172 <strlen+0x2>
+ 800017a:	1a18      	subs	r0, r3, r0
+ 800017c:	3801      	subs	r0, #1
+ 800017e:	4770      	bx	lr
+
+08000180 <ESP8266_MQTT_Init>:
+static ESP_State_t current_esp_state;
+static uint32_t command_tick;
+static uint8_t retry_count = 0;
+#define MAX_RETRY 3
+
+void ESP8266_MQTT_Init(void) {
+ 8000180:	b480      	push	{r7}
+ 8000182:	af00      	add	r7, sp, #0
+    current_esp_state = ESP_STATE_INIT;
+ 8000184:	4b06      	ldr	r3, [pc, #24]	@ (80001a0 <ESP8266_MQTT_Init+0x20>)
+ 8000186:	2200      	movs	r2, #0
+ 8000188:	701a      	strb	r2, [r3, #0]
+    command_tick = 0;
+ 800018a:	4b06      	ldr	r3, [pc, #24]	@ (80001a4 <ESP8266_MQTT_Init+0x24>)
+ 800018c:	2200      	movs	r2, #0
+ 800018e:	601a      	str	r2, [r3, #0]
+    retry_count = 0;
+ 8000190:	4b05      	ldr	r3, [pc, #20]	@ (80001a8 <ESP8266_MQTT_Init+0x28>)
+ 8000192:	2200      	movs	r2, #0
+ 8000194:	701a      	strb	r2, [r3, #0]
+}
+ 8000196:	bf00      	nop
+ 8000198:	46bd      	mov	sp, r7
+ 800019a:	bc80      	pop	{r7}
+ 800019c:	4770      	bx	lr
+ 800019e:	bf00      	nop
+ 80001a0:	2000001c 	.word	0x2000001c
+ 80001a4:	20000020 	.word	0x20000020
+ 80001a8:	20000024 	.word	0x20000024
+
+080001ac <Send_AT_Command>:
+
+// Hàm phụ trợ để gửi lệnh và chuyển trạng thái
+static void Send_AT_Command(const char* cmd, ESP_State_t next_wait_state) {
+ 80001ac:	b580      	push	{r7, lr}
+ 80001ae:	b082      	sub	sp, #8
+ 80001b0:	af00      	add	r7, sp, #0
+ 80001b2:	6078      	str	r0, [r7, #4]
+ 80001b4:	460b      	mov	r3, r1
+ 80001b6:	70fb      	strb	r3, [r7, #3]
+    UART1_Clear_Rx_Buffer();
+ 80001b8:	f001 f920 	bl	80013fc <UART1_Clear_Rx_Buffer>
+    UART1_Clear_Data_Flag();
+ 80001bc:	f001 f90e 	bl	80013dc <UART1_Clear_Data_Flag>
+    UART1_DMA_Transmit((uint8_t*)cmd, strlen(cmd));
+ 80001c0:	6878      	ldr	r0, [r7, #4]
+ 80001c2:	f7ff ffd5 	bl	8000170 <strlen>
+ 80001c6:	4603      	mov	r3, r0
+ 80001c8:	b29b      	uxth	r3, r3
+ 80001ca:	4619      	mov	r1, r3
+ 80001cc:	6878      	ldr	r0, [r7, #4]
+ 80001ce:	f001 f807 	bl	80011e0 <UART1_DMA_Transmit>
+    command_tick = Get_System_Tick();
+ 80001d2:	f000 ff3f 	bl	8001054 <Get_System_Tick>
+ 80001d6:	4603      	mov	r3, r0
+ 80001d8:	4a04      	ldr	r2, [pc, #16]	@ (80001ec <Send_AT_Command+0x40>)
+ 80001da:	6013      	str	r3, [r2, #0]
+    current_esp_state = next_wait_state;
+ 80001dc:	4a04      	ldr	r2, [pc, #16]	@ (80001f0 <Send_AT_Command+0x44>)
+ 80001de:	78fb      	ldrb	r3, [r7, #3]
+ 80001e0:	7013      	strb	r3, [r2, #0]
+}
+ 80001e2:	bf00      	nop
+ 80001e4:	3708      	adds	r7, #8
+ 80001e6:	46bd      	mov	sp, r7
+ 80001e8:	bd80      	pop	{r7, pc}
+ 80001ea:	bf00      	nop
+ 80001ec:	20000020 	.word	0x20000020
+ 80001f0:	2000001c 	.word	0x2000001c
+
+080001f4 <ESP8266_MQTT_Update>:
+
+void ESP8266_MQTT_Update(void) {
+ 80001f4:	b580      	push	{r7, lr}
+ 80001f6:	b088      	sub	sp, #32
+ 80001f8:	af00      	add	r7, sp, #0
+    uint32_t current_tick = Get_System_Tick();
+ 80001fa:	f000 ff2b 	bl	8001054 <Get_System_Tick>
+ 80001fe:	61f8      	str	r0, [r7, #28]
+
+    switch (current_esp_state) {
+ 8000200:	4ba9      	ldr	r3, [pc, #676]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000202:	781b      	ldrb	r3, [r3, #0]
+ 8000204:	2b0d      	cmp	r3, #13
+ 8000206:	f200 81cd 	bhi.w	80005a4 <ESP8266_MQTT_Update+0x3b0>
+ 800020a:	a201      	add	r2, pc, #4	@ (adr r2, 8000210 <ESP8266_MQTT_Update+0x1c>)
+ 800020c:	f852 f023 	ldr.w	pc, [r2, r3, lsl #2]
+ 8000210:	08000249 	.word	0x08000249
+ 8000214:	08000253 	.word	0x08000253
+ 8000218:	0800029b 	.word	0x0800029b
+ 800021c:	080002a5 	.word	0x080002a5
+ 8000220:	080002e7 	.word	0x080002e7
+ 8000224:	080002f1 	.word	0x080002f1
+ 8000228:	08000367 	.word	0x08000367
+ 800022c:	08000371 	.word	0x08000371
+ 8000230:	080003c9 	.word	0x080003c9
+ 8000234:	080003d3 	.word	0x080003d3
+ 8000238:	08000449 	.word	0x08000449
+ 800023c:	08000453 	.word	0x08000453
+ 8000240:	080004e1 	.word	0x080004e1
+ 8000244:	0800055f 	.word	0x0800055f
+
+        // --- 1. KIỂM TRA GIAO TIẾP VẬT LÝ ---
+        case ESP_STATE_INIT:
+            Send_AT_Command("AT\r\n", ESP_STATE_WAIT_INIT);
+ 8000248:	2101      	movs	r1, #1
+ 800024a:	4898      	ldr	r0, [pc, #608]	@ (80004ac <ESP8266_MQTT_Update+0x2b8>)
+ 800024c:	f7ff ffae 	bl	80001ac <Send_AT_Command>
+            break;
+ 8000250:	e1a8      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+
+        case ESP_STATE_WAIT_INIT:
+            if (UART1_Is_Data_Ready()) {
+ 8000252:	f001 f87b 	bl	800134c <UART1_Is_Data_Ready>
+ 8000256:	4603      	mov	r3, r0
+ 8000258:	2b00      	cmp	r3, #0
+ 800025a:	d012      	beq.n	8000282 <ESP8266_MQTT_Update+0x8e>
+                if (strstr((char*)UART1_Get_Rx_Buffer(), "OK")) {
+ 800025c:	f001 f88a 	bl	8001374 <UART1_Get_Rx_Buffer>
+ 8000260:	4603      	mov	r3, r0
+ 8000262:	4993      	ldr	r1, [pc, #588]	@ (80004b0 <ESP8266_MQTT_Update+0x2bc>)
+ 8000264:	4618      	mov	r0, r3
+ 8000266:	f001 f910 	bl	800148a <strstr>
+ 800026a:	4603      	mov	r3, r0
+ 800026c:	2b00      	cmp	r3, #0
+ 800026e:	d005      	beq.n	800027c <ESP8266_MQTT_Update+0x88>
+                    current_esp_state = ESP_STATE_WIFI_MODE;
+ 8000270:	4b8d      	ldr	r3, [pc, #564]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000272:	2202      	movs	r2, #2
+ 8000274:	701a      	strb	r2, [r3, #0]
+                    retry_count = 0;
+ 8000276:	4b8f      	ldr	r3, [pc, #572]	@ (80004b4 <ESP8266_MQTT_Update+0x2c0>)
+ 8000278:	2200      	movs	r2, #0
+ 800027a:	701a      	strb	r2, [r3, #0]
+                }
+                UART1_Clear_Data_Flag();
+ 800027c:	f001 f8ae 	bl	80013dc <UART1_Clear_Data_Flag>
+            } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+                current_esp_state = ESP_STATE_ERROR;
+            }
+            break;
+ 8000280:	e183      	b.n	800058a <ESP8266_MQTT_Update+0x396>
+            } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+ 8000282:	4b8d      	ldr	r3, [pc, #564]	@ (80004b8 <ESP8266_MQTT_Update+0x2c4>)
+ 8000284:	681b      	ldr	r3, [r3, #0]
+ 8000286:	69fa      	ldr	r2, [r7, #28]
+ 8000288:	1ad3      	subs	r3, r2, r3
+ 800028a:	f5b3 6ffa 	cmp.w	r3, #2000	@ 0x7d0
+ 800028e:	f240 817c 	bls.w	800058a <ESP8266_MQTT_Update+0x396>
+                current_esp_state = ESP_STATE_ERROR;
+ 8000292:	4b85      	ldr	r3, [pc, #532]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000294:	220d      	movs	r2, #13
+ 8000296:	701a      	strb	r2, [r3, #0]
+            break;
+ 8000298:	e177      	b.n	800058a <ESP8266_MQTT_Update+0x396>
+
+        // --- 2. CẤU HÌNH STATION MODE ---
+        case ESP_STATE_WIFI_MODE:
+            Send_AT_Command("AT+CWMODE=1\r\n", ESP_STATE_WAIT_WIFI_MODE);
+ 800029a:	2103      	movs	r1, #3
+ 800029c:	4887      	ldr	r0, [pc, #540]	@ (80004bc <ESP8266_MQTT_Update+0x2c8>)
+ 800029e:	f7ff ff85 	bl	80001ac <Send_AT_Command>
+            break;
+ 80002a2:	e17f      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+
+        case ESP_STATE_WAIT_WIFI_MODE:
+            if (UART1_Is_Data_Ready()) {
+ 80002a4:	f001 f852 	bl	800134c <UART1_Is_Data_Ready>
+ 80002a8:	4603      	mov	r3, r0
+ 80002aa:	2b00      	cmp	r3, #0
+ 80002ac:	d00f      	beq.n	80002ce <ESP8266_MQTT_Update+0xda>
+                if (strstr((char*)UART1_Get_Rx_Buffer(), "OK")) {
+ 80002ae:	f001 f861 	bl	8001374 <UART1_Get_Rx_Buffer>
+ 80002b2:	4603      	mov	r3, r0
+ 80002b4:	497e      	ldr	r1, [pc, #504]	@ (80004b0 <ESP8266_MQTT_Update+0x2bc>)
+ 80002b6:	4618      	mov	r0, r3
+ 80002b8:	f001 f8e7 	bl	800148a <strstr>
+ 80002bc:	4603      	mov	r3, r0
+ 80002be:	2b00      	cmp	r3, #0
+ 80002c0:	d002      	beq.n	80002c8 <ESP8266_MQTT_Update+0xd4>
+                    current_esp_state = ESP_STATE_WIFI_CONN;
+ 80002c2:	4b79      	ldr	r3, [pc, #484]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 80002c4:	2204      	movs	r2, #4
+ 80002c6:	701a      	strb	r2, [r3, #0]
+                }
+                UART1_Clear_Data_Flag();
+ 80002c8:	f001 f888 	bl	80013dc <UART1_Clear_Data_Flag>
+            } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+                current_esp_state = ESP_STATE_ERROR;
+            }
+            break;
+ 80002cc:	e15f      	b.n	800058e <ESP8266_MQTT_Update+0x39a>
+            } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+ 80002ce:	4b7a      	ldr	r3, [pc, #488]	@ (80004b8 <ESP8266_MQTT_Update+0x2c4>)
+ 80002d0:	681b      	ldr	r3, [r3, #0]
+ 80002d2:	69fa      	ldr	r2, [r7, #28]
+ 80002d4:	1ad3      	subs	r3, r2, r3
+ 80002d6:	f5b3 6ffa 	cmp.w	r3, #2000	@ 0x7d0
+ 80002da:	f240 8158 	bls.w	800058e <ESP8266_MQTT_Update+0x39a>
+                current_esp_state = ESP_STATE_ERROR;
+ 80002de:	4b72      	ldr	r3, [pc, #456]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 80002e0:	220d      	movs	r2, #13
+ 80002e2:	701a      	strb	r2, [r3, #0]
+            break;
+ 80002e4:	e153      	b.n	800058e <ESP8266_MQTT_Update+0x39a>
+
+        // --- 3. KẾT NỐI WI-FI ---
+        case ESP_STATE_WIFI_CONN:
+            Send_AT_Command("AT+CWJAP=\"WIFI_SSID\",\"WIFI_PASSWORD\"\r\n", ESP_STATE_WAIT_WIFI_CONN);
+ 80002e6:	2105      	movs	r1, #5
+ 80002e8:	4875      	ldr	r0, [pc, #468]	@ (80004c0 <ESP8266_MQTT_Update+0x2cc>)
+ 80002ea:	f7ff ff5f 	bl	80001ac <Send_AT_Command>
+            break;
+ 80002ee:	e159      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+
+        case ESP_STATE_WAIT_WIFI_CONN:
+            if (UART1_Is_Data_Ready()) {
+ 80002f0:	f001 f82c 	bl	800134c <UART1_Is_Data_Ready>
+ 80002f4:	4603      	mov	r3, r0
+ 80002f6:	2b00      	cmp	r3, #0
+ 80002f8:	d028      	beq.n	800034c <ESP8266_MQTT_Update+0x158>
+                char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+ 80002fa:	f001 f83b 	bl	8001374 <UART1_Get_Rx_Buffer>
+ 80002fe:	6038      	str	r0, [r7, #0]
+                if (strstr(rx_buf, "WIFI CONNECTED") && strstr(rx_buf, "OK")) {
+ 8000300:	4970      	ldr	r1, [pc, #448]	@ (80004c4 <ESP8266_MQTT_Update+0x2d0>)
+ 8000302:	6838      	ldr	r0, [r7, #0]
+ 8000304:	f001 f8c1 	bl	800148a <strstr>
+ 8000308:	4603      	mov	r3, r0
+ 800030a:	2b00      	cmp	r3, #0
+ 800030c:	d00a      	beq.n	8000324 <ESP8266_MQTT_Update+0x130>
+ 800030e:	4968      	ldr	r1, [pc, #416]	@ (80004b0 <ESP8266_MQTT_Update+0x2bc>)
+ 8000310:	6838      	ldr	r0, [r7, #0]
+ 8000312:	f001 f8ba 	bl	800148a <strstr>
+ 8000316:	4603      	mov	r3, r0
+ 8000318:	2b00      	cmp	r3, #0
+ 800031a:	d003      	beq.n	8000324 <ESP8266_MQTT_Update+0x130>
+                    current_esp_state = ESP_STATE_MQTT_CFG;
+ 800031c:	4b62      	ldr	r3, [pc, #392]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 800031e:	2206      	movs	r2, #6
+ 8000320:	701a      	strb	r2, [r3, #0]
+ 8000322:	e010      	b.n	8000346 <ESP8266_MQTT_Update+0x152>
+                } else if (strstr(rx_buf, "FAIL") || strstr(rx_buf, "ERROR")) {
+ 8000324:	4968      	ldr	r1, [pc, #416]	@ (80004c8 <ESP8266_MQTT_Update+0x2d4>)
+ 8000326:	6838      	ldr	r0, [r7, #0]
+ 8000328:	f001 f8af 	bl	800148a <strstr>
+ 800032c:	4603      	mov	r3, r0
+ 800032e:	2b00      	cmp	r3, #0
+ 8000330:	d106      	bne.n	8000340 <ESP8266_MQTT_Update+0x14c>
+ 8000332:	4966      	ldr	r1, [pc, #408]	@ (80004cc <ESP8266_MQTT_Update+0x2d8>)
+ 8000334:	6838      	ldr	r0, [r7, #0]
+ 8000336:	f001 f8a8 	bl	800148a <strstr>
+ 800033a:	4603      	mov	r3, r0
+ 800033c:	2b00      	cmp	r3, #0
+ 800033e:	d002      	beq.n	8000346 <ESP8266_MQTT_Update+0x152>
+                    current_esp_state = ESP_STATE_ERROR;
+ 8000340:	4b59      	ldr	r3, [pc, #356]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000342:	220d      	movs	r2, #13
+ 8000344:	701a      	strb	r2, [r3, #0]
+                }
+                UART1_Clear_Data_Flag();
+ 8000346:	f001 f849 	bl	80013dc <UART1_Clear_Data_Flag>
+            } else if ((current_tick - command_tick) > WIFI_CONN_TIMEOUT_MS) {
+                current_esp_state = ESP_STATE_ERROR;
+            }
+            break;
+ 800034a:	e122      	b.n	8000592 <ESP8266_MQTT_Update+0x39e>
+            } else if ((current_tick - command_tick) > WIFI_CONN_TIMEOUT_MS) {
+ 800034c:	4b5a      	ldr	r3, [pc, #360]	@ (80004b8 <ESP8266_MQTT_Update+0x2c4>)
+ 800034e:	681b      	ldr	r3, [r3, #0]
+ 8000350:	69fa      	ldr	r2, [r7, #28]
+ 8000352:	1ad3      	subs	r3, r2, r3
+ 8000354:	f242 7210 	movw	r2, #10000	@ 0x2710
+ 8000358:	4293      	cmp	r3, r2
+ 800035a:	f240 811a 	bls.w	8000592 <ESP8266_MQTT_Update+0x39e>
+                current_esp_state = ESP_STATE_ERROR;
+ 800035e:	4b52      	ldr	r3, [pc, #328]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000360:	220d      	movs	r2, #13
+ 8000362:	701a      	strb	r2, [r3, #0]
+            break;
+ 8000364:	e115      	b.n	8000592 <ESP8266_MQTT_Update+0x39e>
+            // --- 4. CẤU HÌNH THÔNG SỐ MQTT CLIENT ---
+                    case ESP_STATE_MQTT_CFG:
+                        // Cú pháp: AT+MQTTUSERCFG=<LinkID>,<Scheme>,<"ClientID">,<"Username">,<"Password">,<Cert_key_ID>,<CA_ID>,<"Path">
+                        // Scheme = 1 (TCP qua port 1883). Thay "user" và "pass" bằng thông tin từ HiveMQ Credentials.
+                        Send_AT_Command("AT+MQTTUSERCFG=0,1,\"STM32_Gateway_01\",\"user\",\"pass\",0,0,\"\"\r\n", ESP_STATE_WAIT_MQTT_CFG);
+ 8000366:	2107      	movs	r1, #7
+ 8000368:	4859      	ldr	r0, [pc, #356]	@ (80004d0 <ESP8266_MQTT_Update+0x2dc>)
+ 800036a:	f7ff ff1f 	bl	80001ac <Send_AT_Command>
+                        break;
+ 800036e:	e119      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+
+                    case ESP_STATE_WAIT_MQTT_CFG:
+                        if (UART1_Is_Data_Ready()) {
+ 8000370:	f000 ffec 	bl	800134c <UART1_Is_Data_Ready>
+ 8000374:	4603      	mov	r3, r0
+ 8000376:	2b00      	cmp	r3, #0
+ 8000378:	d01a      	beq.n	80003b0 <ESP8266_MQTT_Update+0x1bc>
+                            char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+ 800037a:	f000 fffb 	bl	8001374 <UART1_Get_Rx_Buffer>
+ 800037e:	6078      	str	r0, [r7, #4]
+                            if (strstr(rx_buf, "OK") != NULL) {
+ 8000380:	494b      	ldr	r1, [pc, #300]	@ (80004b0 <ESP8266_MQTT_Update+0x2bc>)
+ 8000382:	6878      	ldr	r0, [r7, #4]
+ 8000384:	f001 f881 	bl	800148a <strstr>
+ 8000388:	4603      	mov	r3, r0
+ 800038a:	2b00      	cmp	r3, #0
+ 800038c:	d003      	beq.n	8000396 <ESP8266_MQTT_Update+0x1a2>
+                                current_esp_state = ESP_STATE_MQTT_CONN;
+ 800038e:	4b46      	ldr	r3, [pc, #280]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000390:	2208      	movs	r2, #8
+ 8000392:	701a      	strb	r2, [r3, #0]
+ 8000394:	e009      	b.n	80003aa <ESP8266_MQTT_Update+0x1b6>
+                            } else if (strstr(rx_buf, "ERROR") != NULL) {
+ 8000396:	494d      	ldr	r1, [pc, #308]	@ (80004cc <ESP8266_MQTT_Update+0x2d8>)
+ 8000398:	6878      	ldr	r0, [r7, #4]
+ 800039a:	f001 f876 	bl	800148a <strstr>
+ 800039e:	4603      	mov	r3, r0
+ 80003a0:	2b00      	cmp	r3, #0
+ 80003a2:	d002      	beq.n	80003aa <ESP8266_MQTT_Update+0x1b6>
+                                current_esp_state = ESP_STATE_ERROR;
+ 80003a4:	4b40      	ldr	r3, [pc, #256]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 80003a6:	220d      	movs	r2, #13
+ 80003a8:	701a      	strb	r2, [r3, #0]
+                            }
+                            UART1_Clear_Data_Flag();
+ 80003aa:	f001 f817 	bl	80013dc <UART1_Clear_Data_Flag>
+                        } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+                            current_esp_state = ESP_STATE_ERROR;
+                        }
+                        break;
+ 80003ae:	e0f2      	b.n	8000596 <ESP8266_MQTT_Update+0x3a2>
+                        } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+ 80003b0:	4b41      	ldr	r3, [pc, #260]	@ (80004b8 <ESP8266_MQTT_Update+0x2c4>)
+ 80003b2:	681b      	ldr	r3, [r3, #0]
+ 80003b4:	69fa      	ldr	r2, [r7, #28]
+ 80003b6:	1ad3      	subs	r3, r2, r3
+ 80003b8:	f5b3 6ffa 	cmp.w	r3, #2000	@ 0x7d0
+ 80003bc:	f240 80eb 	bls.w	8000596 <ESP8266_MQTT_Update+0x3a2>
+                            current_esp_state = ESP_STATE_ERROR;
+ 80003c0:	4b39      	ldr	r3, [pc, #228]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 80003c2:	220d      	movs	r2, #13
+ 80003c4:	701a      	strb	r2, [r3, #0]
+                        break;
+ 80003c6:	e0e6      	b.n	8000596 <ESP8266_MQTT_Update+0x3a2>
+
+                    // --- 5. KẾT NỐI ĐẾN BROKER HIVEMQ ---
+                    case ESP_STATE_MQTT_CONN:
+                        // Cú pháp: AT+MQTTCONN=<LinkID>,<"Host">,<Port>,<Reconnect>
+                        // Reconnect = 1 để ESP tự động kết nối lại khi rớt mạng.
+                        Send_AT_Command("AT+MQTTCONN=0,\"broker.hivemq.com\",1883,1\r\n", ESP_STATE_WAIT_MQTT_CONN);
+ 80003c8:	2109      	movs	r1, #9
+ 80003ca:	4842      	ldr	r0, [pc, #264]	@ (80004d4 <ESP8266_MQTT_Update+0x2e0>)
+ 80003cc:	f7ff feee 	bl	80001ac <Send_AT_Command>
+                        break;
+ 80003d0:	e0e8      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+
+                    case ESP_STATE_WAIT_MQTT_CONN:
+                        if (UART1_Is_Data_Ready()) {
+ 80003d2:	f000 ffbb 	bl	800134c <UART1_Is_Data_Ready>
+ 80003d6:	4603      	mov	r3, r0
+ 80003d8:	2b00      	cmp	r3, #0
+ 80003da:	d028      	beq.n	800042e <ESP8266_MQTT_Update+0x23a>
+                            char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+ 80003dc:	f000 ffca 	bl	8001374 <UART1_Get_Rx_Buffer>
+ 80003e0:	60b8      	str	r0, [r7, #8]
+                            // Phản hồi thành công sẽ có chuỗi "+MQTTCONNECTED" và "OK"
+                            if (strstr(rx_buf, "OK") != NULL || strstr(rx_buf, "+MQTTCONNECTED") != NULL) {
+ 80003e2:	4933      	ldr	r1, [pc, #204]	@ (80004b0 <ESP8266_MQTT_Update+0x2bc>)
+ 80003e4:	68b8      	ldr	r0, [r7, #8]
+ 80003e6:	f001 f850 	bl	800148a <strstr>
+ 80003ea:	4603      	mov	r3, r0
+ 80003ec:	2b00      	cmp	r3, #0
+ 80003ee:	d106      	bne.n	80003fe <ESP8266_MQTT_Update+0x20a>
+ 80003f0:	4939      	ldr	r1, [pc, #228]	@ (80004d8 <ESP8266_MQTT_Update+0x2e4>)
+ 80003f2:	68b8      	ldr	r0, [r7, #8]
+ 80003f4:	f001 f849 	bl	800148a <strstr>
+ 80003f8:	4603      	mov	r3, r0
+ 80003fa:	2b00      	cmp	r3, #0
+ 80003fc:	d003      	beq.n	8000406 <ESP8266_MQTT_Update+0x212>
+                                current_esp_state = ESP_STATE_MQTT_SUB;
+ 80003fe:	4b2a      	ldr	r3, [pc, #168]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000400:	220a      	movs	r2, #10
+ 8000402:	701a      	strb	r2, [r3, #0]
+ 8000404:	e010      	b.n	8000428 <ESP8266_MQTT_Update+0x234>
+                            } else if (strstr(rx_buf, "ERROR") != NULL || strstr(rx_buf, "FAIL") != NULL) {
+ 8000406:	4931      	ldr	r1, [pc, #196]	@ (80004cc <ESP8266_MQTT_Update+0x2d8>)
+ 8000408:	68b8      	ldr	r0, [r7, #8]
+ 800040a:	f001 f83e 	bl	800148a <strstr>
+ 800040e:	4603      	mov	r3, r0
+ 8000410:	2b00      	cmp	r3, #0
+ 8000412:	d106      	bne.n	8000422 <ESP8266_MQTT_Update+0x22e>
+ 8000414:	492c      	ldr	r1, [pc, #176]	@ (80004c8 <ESP8266_MQTT_Update+0x2d4>)
+ 8000416:	68b8      	ldr	r0, [r7, #8]
+ 8000418:	f001 f837 	bl	800148a <strstr>
+ 800041c:	4603      	mov	r3, r0
+ 800041e:	2b00      	cmp	r3, #0
+ 8000420:	d002      	beq.n	8000428 <ESP8266_MQTT_Update+0x234>
+                                current_esp_state = ESP_STATE_ERROR;
+ 8000422:	4b21      	ldr	r3, [pc, #132]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000424:	220d      	movs	r2, #13
+ 8000426:	701a      	strb	r2, [r3, #0]
+                            }
+                            UART1_Clear_Data_Flag();
+ 8000428:	f000 ffd8 	bl	80013dc <UART1_Clear_Data_Flag>
+                        } else if ((current_tick - command_tick) > MQTT_CONN_TIMEOUT_MS) { // Dùng timeout dài hơn cho kết nối TCP
+                            current_esp_state = ESP_STATE_ERROR;
+                        }
+                        break;
+ 800042c:	e0b5      	b.n	800059a <ESP8266_MQTT_Update+0x3a6>
+                        } else if ((current_tick - command_tick) > MQTT_CONN_TIMEOUT_MS) { // Dùng timeout dài hơn cho kết nối TCP
+ 800042e:	4b22      	ldr	r3, [pc, #136]	@ (80004b8 <ESP8266_MQTT_Update+0x2c4>)
+ 8000430:	681b      	ldr	r3, [r3, #0]
+ 8000432:	69fa      	ldr	r2, [r7, #28]
+ 8000434:	1ad3      	subs	r3, r2, r3
+ 8000436:	f242 7210 	movw	r2, #10000	@ 0x2710
+ 800043a:	4293      	cmp	r3, r2
+ 800043c:	f240 80ad 	bls.w	800059a <ESP8266_MQTT_Update+0x3a6>
+                            current_esp_state = ESP_STATE_ERROR;
+ 8000440:	4b19      	ldr	r3, [pc, #100]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000442:	220d      	movs	r2, #13
+ 8000444:	701a      	strb	r2, [r3, #0]
+                        break;
+ 8000446:	e0a8      	b.n	800059a <ESP8266_MQTT_Update+0x3a6>
+
+                    // --- 6. SUBCRIBE TOPIC (LẮNG NGHE LỆNH TỪ APP) ---
+                    case ESP_STATE_MQTT_SUB:
+                        // Cú pháp: AT+MQTTSUB=<LinkID>,<"Topic">,<QoS>
+                        // Đăng ký Topic lệnh điều khiển từ App, QoS = 1.
+                        Send_AT_Command("AT+MQTTSUB=0,\"home/app/commands\",1\r\n", ESP_STATE_WAIT_MQTT_SUB);
+ 8000448:	210b      	movs	r1, #11
+ 800044a:	4824      	ldr	r0, [pc, #144]	@ (80004dc <ESP8266_MQTT_Update+0x2e8>)
+ 800044c:	f7ff feae 	bl	80001ac <Send_AT_Command>
+                        break;
+ 8000450:	e0a8      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+
+                    case ESP_STATE_WAIT_MQTT_SUB:
+                        if (UART1_Is_Data_Ready()) {
+ 8000452:	f000 ff7b 	bl	800134c <UART1_Is_Data_Ready>
+ 8000456:	4603      	mov	r3, r0
+ 8000458:	2b00      	cmp	r3, #0
+ 800045a:	d01a      	beq.n	8000492 <ESP8266_MQTT_Update+0x29e>
+                            char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+ 800045c:	f000 ff8a 	bl	8001374 <UART1_Get_Rx_Buffer>
+ 8000460:	60f8      	str	r0, [r7, #12]
+                            if (strstr(rx_buf, "OK") != NULL) {
+ 8000462:	4913      	ldr	r1, [pc, #76]	@ (80004b0 <ESP8266_MQTT_Update+0x2bc>)
+ 8000464:	68f8      	ldr	r0, [r7, #12]
+ 8000466:	f001 f810 	bl	800148a <strstr>
+ 800046a:	4603      	mov	r3, r0
+ 800046c:	2b00      	cmp	r3, #0
+ 800046e:	d003      	beq.n	8000478 <ESP8266_MQTT_Update+0x284>
+                                // Hoàn tất chuỗi khởi tạo mạng. Chuyển sang trạng thái hoạt động.
+                                current_esp_state = ESP_STATE_RUNNING;
+ 8000470:	4b0d      	ldr	r3, [pc, #52]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000472:	220c      	movs	r2, #12
+ 8000474:	701a      	strb	r2, [r3, #0]
+ 8000476:	e009      	b.n	800048c <ESP8266_MQTT_Update+0x298>
+                            } else if (strstr(rx_buf, "ERROR") != NULL) {
+ 8000478:	4914      	ldr	r1, [pc, #80]	@ (80004cc <ESP8266_MQTT_Update+0x2d8>)
+ 800047a:	68f8      	ldr	r0, [r7, #12]
+ 800047c:	f001 f805 	bl	800148a <strstr>
+ 8000480:	4603      	mov	r3, r0
+ 8000482:	2b00      	cmp	r3, #0
+ 8000484:	d002      	beq.n	800048c <ESP8266_MQTT_Update+0x298>
+                                current_esp_state = ESP_STATE_ERROR;
+ 8000486:	4b08      	ldr	r3, [pc, #32]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 8000488:	220d      	movs	r2, #13
+ 800048a:	701a      	strb	r2, [r3, #0]
+                            }
+                            UART1_Clear_Data_Flag();
+ 800048c:	f000 ffa6 	bl	80013dc <UART1_Clear_Data_Flag>
+                        } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+                            current_esp_state = ESP_STATE_ERROR;
+                        }
+                        break;
+ 8000490:	e085      	b.n	800059e <ESP8266_MQTT_Update+0x3aa>
+                        } else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+ 8000492:	4b09      	ldr	r3, [pc, #36]	@ (80004b8 <ESP8266_MQTT_Update+0x2c4>)
+ 8000494:	681b      	ldr	r3, [r3, #0]
+ 8000496:	69fa      	ldr	r2, [r7, #28]
+ 8000498:	1ad3      	subs	r3, r2, r3
+ 800049a:	f5b3 6ffa 	cmp.w	r3, #2000	@ 0x7d0
+ 800049e:	d97e      	bls.n	800059e <ESP8266_MQTT_Update+0x3aa>
+                            current_esp_state = ESP_STATE_ERROR;
+ 80004a0:	4b01      	ldr	r3, [pc, #4]	@ (80004a8 <ESP8266_MQTT_Update+0x2b4>)
+ 80004a2:	220d      	movs	r2, #13
+ 80004a4:	701a      	strb	r2, [r3, #0]
+                        break;
+ 80004a6:	e07a      	b.n	800059e <ESP8266_MQTT_Update+0x3aa>
+ 80004a8:	2000001c 	.word	0x2000001c
+ 80004ac:	08001518 	.word	0x08001518
+ 80004b0:	08001520 	.word	0x08001520
+ 80004b4:	20000024 	.word	0x20000024
+ 80004b8:	20000020 	.word	0x20000020
+ 80004bc:	08001524 	.word	0x08001524
+ 80004c0:	08001534 	.word	0x08001534
+ 80004c4:	0800155c 	.word	0x0800155c
+ 80004c8:	0800156c 	.word	0x0800156c
+ 80004cc:	08001574 	.word	0x08001574
+ 80004d0:	0800157c 	.word	0x0800157c
+ 80004d4:	080015bc 	.word	0x080015bc
+ 80004d8:	080015e8 	.word	0x080015e8
+ 80004dc:	080015f8 	.word	0x080015f8
+                    case ESP_STATE_RUNNING:
+                                if (UART1_Is_Data_Ready()) {
+ 80004e0:	f000 ff34 	bl	800134c <UART1_Is_Data_Ready>
+ 80004e4:	4603      	mov	r3, r0
+ 80004e6:	2b00      	cmp	r3, #0
+ 80004e8:	d05b      	beq.n	80005a2 <ESP8266_MQTT_Update+0x3ae>
+                                    char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+ 80004ea:	f000 ff43 	bl	8001374 <UART1_Get_Rx_Buffer>
+ 80004ee:	61b8      	str	r0, [r7, #24]
+
+                                    // Chuỗi từ ESP nhả ra có định dạng: +MQTTSUBRECV:0,"home/app/commands",... ,ON
+                                    if (strstr(rx_buf, "+MQTTSUBRECV") != NULL) {
+ 80004f0:	492e      	ldr	r1, [pc, #184]	@ (80005ac <ESP8266_MQTT_Update+0x3b8>)
+ 80004f2:	69b8      	ldr	r0, [r7, #24]
+ 80004f4:	f000 ffc9 	bl	800148a <strstr>
+ 80004f8:	4603      	mov	r3, r0
+ 80004fa:	2b00      	cmp	r3, #0
+ 80004fc:	d02a      	beq.n	8000554 <ESP8266_MQTT_Update+0x360>
+
+                                        // Tìm kiếm Payload lệnh thực thi
+                                        if (strstr(rx_buf, "ON") != NULL) {
+ 80004fe:	492c      	ldr	r1, [pc, #176]	@ (80005b0 <ESP8266_MQTT_Update+0x3bc>)
+ 8000500:	69b8      	ldr	r0, [r7, #24]
+ 8000502:	f000 ffc2 	bl	800148a <strstr>
+ 8000506:	4603      	mov	r3, r0
+ 8000508:	2b00      	cmp	r3, #0
+ 800050a:	d00e      	beq.n	800052a <ESP8266_MQTT_Update+0x336>
+                                            relay_set_state(RELAY_ON); // Bật thiết bị
+ 800050c:	2001      	movs	r0, #1
+ 800050e:	f000 f997 	bl	8000840 <relay_set_state>
+
+                                            // Phản hồi trạng thái ngược lên App
+                                            const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"ON\",1,0\r\n";
+ 8000512:	4b28      	ldr	r3, [pc, #160]	@ (80005b4 <ESP8266_MQTT_Update+0x3c0>)
+ 8000514:	613b      	str	r3, [r7, #16]
+                                            UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
+ 8000516:	6938      	ldr	r0, [r7, #16]
+ 8000518:	f7ff fe2a 	bl	8000170 <strlen>
+ 800051c:	4603      	mov	r3, r0
+ 800051e:	b29b      	uxth	r3, r3
+ 8000520:	4619      	mov	r1, r3
+ 8000522:	6938      	ldr	r0, [r7, #16]
+ 8000524:	f000 fe5c 	bl	80011e0 <UART1_DMA_Transmit>
+ 8000528:	e014      	b.n	8000554 <ESP8266_MQTT_Update+0x360>
+                                        }
+                                        else if (strstr(rx_buf, "OFF") != NULL) {
+ 800052a:	4923      	ldr	r1, [pc, #140]	@ (80005b8 <ESP8266_MQTT_Update+0x3c4>)
+ 800052c:	69b8      	ldr	r0, [r7, #24]
+ 800052e:	f000 ffac 	bl	800148a <strstr>
+ 8000532:	4603      	mov	r3, r0
+ 8000534:	2b00      	cmp	r3, #0
+ 8000536:	d00d      	beq.n	8000554 <ESP8266_MQTT_Update+0x360>
+                                            relay_set_state(RELAY_OFF); // Tắt thiết bị
+ 8000538:	2000      	movs	r0, #0
+ 800053a:	f000 f981 	bl	8000840 <relay_set_state>
+
+                                            // Phản hồi trạng thái ngược lên App
+                                            const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"OFF\",1,0\r\n";
+ 800053e:	4b1f      	ldr	r3, [pc, #124]	@ (80005bc <ESP8266_MQTT_Update+0x3c8>)
+ 8000540:	617b      	str	r3, [r7, #20]
+                                            UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
+ 8000542:	6978      	ldr	r0, [r7, #20]
+ 8000544:	f7ff fe14 	bl	8000170 <strlen>
+ 8000548:	4603      	mov	r3, r0
+ 800054a:	b29b      	uxth	r3, r3
+ 800054c:	4619      	mov	r1, r3
+ 800054e:	6978      	ldr	r0, [r7, #20]
+ 8000550:	f000 fe46 	bl	80011e0 <UART1_DMA_Transmit>
+                                        }
+                                    }
+
+                                    // Luôn dọn dẹp cờ và buffer sau khi xử lý xong một chuỗi
+                                    UART1_Clear_Rx_Buffer();
+ 8000554:	f000 ff52 	bl	80013fc <UART1_Clear_Rx_Buffer>
+                                    UART1_Clear_Data_Flag();
+ 8000558:	f000 ff40 	bl	80013dc <UART1_Clear_Data_Flag>
+                                }
+                                break;
+ 800055c:	e021      	b.n	80005a2 <ESP8266_MQTT_Update+0x3ae>
+
+                            // --- XỬ LÝ LỖI ---
+                            case ESP_STATE_ERROR:
+                                if (retry_count < MAX_RETRY) {
+ 800055e:	4b18      	ldr	r3, [pc, #96]	@ (80005c0 <ESP8266_MQTT_Update+0x3cc>)
+ 8000560:	781b      	ldrb	r3, [r3, #0]
+ 8000562:	2b02      	cmp	r3, #2
+ 8000564:	d809      	bhi.n	800057a <ESP8266_MQTT_Update+0x386>
+                                    retry_count++;
+ 8000566:	4b16      	ldr	r3, [pc, #88]	@ (80005c0 <ESP8266_MQTT_Update+0x3cc>)
+ 8000568:	781b      	ldrb	r3, [r3, #0]
+ 800056a:	3301      	adds	r3, #1
+ 800056c:	b2da      	uxtb	r2, r3
+ 800056e:	4b14      	ldr	r3, [pc, #80]	@ (80005c0 <ESP8266_MQTT_Update+0x3cc>)
+ 8000570:	701a      	strb	r2, [r3, #0]
+                                    current_esp_state = ESP_STATE_INIT; // Reset quy trình
+ 8000572:	4b14      	ldr	r3, [pc, #80]	@ (80005c4 <ESP8266_MQTT_Update+0x3d0>)
+ 8000574:	2200      	movs	r2, #0
+ 8000576:	701a      	strb	r2, [r3, #0]
+                                    // Hard Reset ESP8266 thông qua chân EN (Nếu có nối dây)
+                                    // Hoặc gửi "AT+RST\r\n"
+                                    Send_AT_Command("AT+RST\r\n", ESP_STATE_WAIT_INIT);
+                                    retry_count = 0;
+                                }
+                                break;
+ 8000578:	e014      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+                                    Send_AT_Command("AT+RST\r\n", ESP_STATE_WAIT_INIT);
+ 800057a:	2101      	movs	r1, #1
+ 800057c:	4812      	ldr	r0, [pc, #72]	@ (80005c8 <ESP8266_MQTT_Update+0x3d4>)
+ 800057e:	f7ff fe15 	bl	80001ac <Send_AT_Command>
+                                    retry_count = 0;
+ 8000582:	4b0f      	ldr	r3, [pc, #60]	@ (80005c0 <ESP8266_MQTT_Update+0x3cc>)
+ 8000584:	2200      	movs	r2, #0
+ 8000586:	701a      	strb	r2, [r3, #0]
+                                break;
+ 8000588:	e00c      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+            break;
+ 800058a:	bf00      	nop
+ 800058c:	e00a      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+            break;
+ 800058e:	bf00      	nop
+ 8000590:	e008      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+            break;
+ 8000592:	bf00      	nop
+ 8000594:	e006      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+                        break;
+ 8000596:	bf00      	nop
+ 8000598:	e004      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+                        break;
+ 800059a:	bf00      	nop
+ 800059c:	e002      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+                        break;
+ 800059e:	bf00      	nop
+ 80005a0:	e000      	b.n	80005a4 <ESP8266_MQTT_Update+0x3b0>
+                                break;
+ 80005a2:	bf00      	nop
+                        }
+                    }
+ 80005a4:	bf00      	nop
+ 80005a6:	3720      	adds	r7, #32
+ 80005a8:	46bd      	mov	sp, r7
+ 80005aa:	bd80      	pop	{r7, pc}
+ 80005ac:	08001620 	.word	0x08001620
+ 80005b0:	08001630 	.word	0x08001630
+ 80005b4:	08001634 	.word	0x08001634
+ 80005b8:	08001660 	.word	0x08001660
+ 80005bc:	08001664 	.word	0x08001664
+ 80005c0:	20000024 	.word	0x20000024
+ 80005c4:	2000001c 	.word	0x2000001c
+ 80005c8:	08001694 	.word	0x08001694
+
+080005cc <UART_Process_MQTT_Publish>:
+
+void UART_Process_MQTT_Publish(void) {
+ 80005cc:	b580      	push	{r7, lr}
+ 80005ce:	b082      	sub	sp, #8
+ 80005d0:	af00      	add	r7, sp, #0
+    // Kiểm tra cờ sự kiện từ Relay
+    if (flag_relay_changed == true) {
+ 80005d2:	4b17      	ldr	r3, [pc, #92]	@ (8000630 <UART_Process_MQTT_Publish+0x64>)
+ 80005d4:	781b      	ldrb	r3, [r3, #0]
+ 80005d6:	b2db      	uxtb	r3, r3
+ 80005d8:	2b00      	cmp	r3, #0
+ 80005da:	d024      	beq.n	8000626 <UART_Process_MQTT_Publish+0x5a>
+
+        // Kiểm tra xem luồng DMA TX có đang bận gửi gói tin nào khác không
+        // (Tránh ghi đè buffer TX khi ESP8266 đang bận xử lý)
+        if ((DMA1_Channel4->CCR & (1U << 0)) == 0) { // DMA_CCR4_EN == 0
+ 80005dc:	4b15      	ldr	r3, [pc, #84]	@ (8000634 <UART_Process_MQTT_Publish+0x68>)
+ 80005de:	681b      	ldr	r3, [r3, #0]
+ 80005e0:	f003 0301 	and.w	r3, r3, #1
+ 80005e4:	2b00      	cmp	r3, #0
+ 80005e6:	d11e      	bne.n	8000626 <UART_Process_MQTT_Publish+0x5a>
+
+            flag_relay_changed = false; // Lập tức xóa cờ để chờ sự kiện tiếp theo
+ 80005e8:	4b11      	ldr	r3, [pc, #68]	@ (8000630 <UART_Process_MQTT_Publish+0x64>)
+ 80005ea:	2200      	movs	r2, #0
+ 80005ec:	701a      	strb	r2, [r3, #0]
+
+            if (current_relay_state == RELAY_ON) {
+ 80005ee:	4b12      	ldr	r3, [pc, #72]	@ (8000638 <UART_Process_MQTT_Publish+0x6c>)
+ 80005f0:	781b      	ldrb	r3, [r3, #0]
+ 80005f2:	b2db      	uxtb	r3, r3
+ 80005f4:	2b01      	cmp	r3, #1
+ 80005f6:	d10b      	bne.n	8000610 <UART_Process_MQTT_Publish+0x44>
+                const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"ON\",1,0\r\n";
+ 80005f8:	4b10      	ldr	r3, [pc, #64]	@ (800063c <UART_Process_MQTT_Publish+0x70>)
+ 80005fa:	603b      	str	r3, [r7, #0]
+                UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
+ 80005fc:	6838      	ldr	r0, [r7, #0]
+ 80005fe:	f7ff fdb7 	bl	8000170 <strlen>
+ 8000602:	4603      	mov	r3, r0
+ 8000604:	b29b      	uxth	r3, r3
+ 8000606:	4619      	mov	r1, r3
+ 8000608:	6838      	ldr	r0, [r7, #0]
+ 800060a:	f000 fde9 	bl	80011e0 <UART1_DMA_Transmit>
+                const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"OFF\",1,0\r\n";
+                UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
+            }
+        }
+    }
+}
+ 800060e:	e00a      	b.n	8000626 <UART_Process_MQTT_Publish+0x5a>
+                const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"OFF\",1,0\r\n";
+ 8000610:	4b0b      	ldr	r3, [pc, #44]	@ (8000640 <UART_Process_MQTT_Publish+0x74>)
+ 8000612:	607b      	str	r3, [r7, #4]
+                UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
+ 8000614:	6878      	ldr	r0, [r7, #4]
+ 8000616:	f7ff fdab 	bl	8000170 <strlen>
+ 800061a:	4603      	mov	r3, r0
+ 800061c:	b29b      	uxth	r3, r3
+ 800061e:	4619      	mov	r1, r3
+ 8000620:	6878      	ldr	r0, [r7, #4]
+ 8000622:	f000 fddd 	bl	80011e0 <UART1_DMA_Transmit>
+}
+ 8000626:	bf00      	nop
+ 8000628:	3708      	adds	r7, #8
+ 800062a:	46bd      	mov	sp, r7
+ 800062c:	bd80      	pop	{r7, pc}
+ 800062e:	bf00      	nop
+ 8000630:	2000002c 	.word	0x2000002c
+ 8000634:	40020044 	.word	0x40020044
+ 8000638:	2000002d 	.word	0x2000002d
+ 800063c:	08001634 	.word	0x08001634
+ 8000640:	08001664 	.word	0x08001664
+
+08000644 <Home_Automation_FSM_Init>:
+} SystemState_t;
+
+static SystemState_t current_state;
+static uint32_t state_timer;
+
+void Home_Automation_FSM_Init(void) {
+ 8000644:	b480      	push	{r7}
+ 8000646:	af00      	add	r7, sp, #0
+    current_state = STATE_IDLE;
+ 8000648:	4b04      	ldr	r3, [pc, #16]	@ (800065c <Home_Automation_FSM_Init+0x18>)
+ 800064a:	2200      	movs	r2, #0
+ 800064c:	701a      	strb	r2, [r3, #0]
+    state_timer = 0;
+ 800064e:	4b04      	ldr	r3, [pc, #16]	@ (8000660 <Home_Automation_FSM_Init+0x1c>)
+ 8000650:	2200      	movs	r2, #0
+ 8000652:	601a      	str	r2, [r3, #0]
+}
+ 8000654:	bf00      	nop
+ 8000656:	46bd      	mov	sp, r7
+ 8000658:	bc80      	pop	{r7}
+ 800065a:	4770      	bx	lr
+ 800065c:	20000025 	.word	0x20000025
+ 8000660:	20000028 	.word	0x20000028
+
+08000664 <Home_Automation_FSM_Update>:
+
+void Home_Automation_FSM_Update(void) {
+ 8000664:	b580      	push	{r7, lr}
+ 8000666:	b082      	sub	sp, #8
+ 8000668:	af00      	add	r7, sp, #0
+    bool door_open = Is_Door_Open();
+ 800066a:	f000 f9f5 	bl	8000a58 <Is_Door_Open>
+ 800066e:	4603      	mov	r3, r0
+ 8000670:	71fb      	strb	r3, [r7, #7]
+    bool ir_triggered = Is_IR_Triggered();
+ 8000672:	f000 f9fd 	bl	8000a70 <Is_IR_Triggered>
+ 8000676:	4603      	mov	r3, r0
+ 8000678:	71bb      	strb	r3, [r7, #6]
+    uint32_t current_tick = Get_System_Tick();
+ 800067a:	f000 fceb 	bl	8001054 <Get_System_Tick>
+ 800067e:	6038      	str	r0, [r7, #0]
+
+    switch (current_state) {
+ 8000680:	4b45      	ldr	r3, [pc, #276]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 8000682:	781b      	ldrb	r3, [r3, #0]
+ 8000684:	2b05      	cmp	r3, #5
+ 8000686:	f200 8083 	bhi.w	8000790 <Home_Automation_FSM_Update+0x12c>
+ 800068a:	a201      	add	r2, pc, #4	@ (adr r2, 8000690 <Home_Automation_FSM_Update+0x2c>)
+ 800068c:	f852 f023 	ldr.w	pc, [r2, r3, lsl #2]
+ 8000690:	080006a9 	.word	0x080006a9
+ 8000694:	080006cb 	.word	0x080006cb
+ 8000698:	080006e5 	.word	0x080006e5
+ 800069c:	08000711 	.word	0x08000711
+ 80006a0:	08000737 	.word	0x08000737
+ 80006a4:	08000751 	.word	0x08000751
+
+        case STATE_IDLE:
+            if (door_open) {
+ 80006a8:	79fb      	ldrb	r3, [r7, #7]
+ 80006aa:	2b00      	cmp	r3, #0
+ 80006ac:	d003      	beq.n	80006b6 <Home_Automation_FSM_Update+0x52>
+                current_state = STATE_DOOR_OPENED_IN;
+ 80006ae:	4b3a      	ldr	r3, [pc, #232]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 80006b0:	2201      	movs	r2, #1
+ 80006b2:	701a      	strb	r2, [r3, #0]
+            else if (ir_triggered) {
+
+                            current_state = STATE_IR_DETECTED_OUT;
+                            state_timer = current_tick;
+                        }
+            break;
+ 80006b4:	e061      	b.n	800077a <Home_Automation_FSM_Update+0x116>
+            else if (ir_triggered) {
+ 80006b6:	79bb      	ldrb	r3, [r7, #6]
+ 80006b8:	2b00      	cmp	r3, #0
+ 80006ba:	d05e      	beq.n	800077a <Home_Automation_FSM_Update+0x116>
+                            current_state = STATE_IR_DETECTED_OUT;
+ 80006bc:	4b36      	ldr	r3, [pc, #216]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 80006be:	2203      	movs	r2, #3
+ 80006c0:	701a      	strb	r2, [r3, #0]
+                            state_timer = current_tick;
+ 80006c2:	4a36      	ldr	r2, [pc, #216]	@ (800079c <Home_Automation_FSM_Update+0x138>)
+ 80006c4:	683b      	ldr	r3, [r7, #0]
+ 80006c6:	6013      	str	r3, [r2, #0]
+            break;
+ 80006c8:	e057      	b.n	800077a <Home_Automation_FSM_Update+0x116>
+            // ---------------- KỊCH BẢN VÀO NHÀ ---------------- //
+                    case STATE_DOOR_OPENED_IN:
+                        // Ngoại lệ 2: Cửa không đóng lại -> FSM sẽ kẹt ở đây mãi mãi (Đúng yêu cầu)
+                        if (!door_open) { // Cửa đóng
+ 80006ca:	79fb      	ldrb	r3, [r7, #7]
+ 80006cc:	f083 0301 	eor.w	r3, r3, #1
+ 80006d0:	b2db      	uxtb	r3, r3
+ 80006d2:	2b00      	cmp	r3, #0
+ 80006d4:	d053      	beq.n	800077e <Home_Automation_FSM_Update+0x11a>
+                            current_state = STATE_WAIT_IR_IN;
+ 80006d6:	4b30      	ldr	r3, [pc, #192]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 80006d8:	2202      	movs	r2, #2
+ 80006da:	701a      	strb	r2, [r3, #0]
+                            state_timer = current_tick;
+ 80006dc:	4a2f      	ldr	r2, [pc, #188]	@ (800079c <Home_Automation_FSM_Update+0x138>)
+ 80006de:	683b      	ldr	r3, [r7, #0]
+ 80006e0:	6013      	str	r3, [r2, #0]
+                        }
+                        break;
+ 80006e2:	e04c      	b.n	800077e <Home_Automation_FSM_Update+0x11a>
+
+                    case STATE_WAIT_IR_IN:
+                        if (ir_triggered) {
+ 80006e4:	79bb      	ldrb	r3, [r7, #6]
+ 80006e6:	2b00      	cmp	r3, #0
+ 80006e8:	d006      	beq.n	80006f8 <Home_Automation_FSM_Update+0x94>
+                        	relay_set_state(RELAY_ON); // XÁC NHẬN VÀO NHÀ
+ 80006ea:	2001      	movs	r0, #1
+ 80006ec:	f000 f8a8 	bl	8000840 <relay_set_state>
+                            current_state = STATE_IDLE;
+ 80006f0:	4b29      	ldr	r3, [pc, #164]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 80006f2:	2200      	movs	r2, #0
+ 80006f4:	701a      	strb	r2, [r3, #0]
+                        }
+                        else if ((current_tick - state_timer) > SEQUENCE_TIMEOUT_MS) {
+                            current_state = STATE_IDLE; // Reset nếu quá 10s không thấy ai
+                        }
+                        break;
+ 80006f6:	e044      	b.n	8000782 <Home_Automation_FSM_Update+0x11e>
+                        else if ((current_tick - state_timer) > SEQUENCE_TIMEOUT_MS) {
+ 80006f8:	4b28      	ldr	r3, [pc, #160]	@ (800079c <Home_Automation_FSM_Update+0x138>)
+ 80006fa:	681b      	ldr	r3, [r3, #0]
+ 80006fc:	683a      	ldr	r2, [r7, #0]
+ 80006fe:	1ad3      	subs	r3, r2, r3
+ 8000700:	f242 7210 	movw	r2, #10000	@ 0x2710
+ 8000704:	4293      	cmp	r3, r2
+ 8000706:	d93c      	bls.n	8000782 <Home_Automation_FSM_Update+0x11e>
+                            current_state = STATE_IDLE; // Reset nếu quá 10s không thấy ai
+ 8000708:	4b23      	ldr	r3, [pc, #140]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 800070a:	2200      	movs	r2, #0
+ 800070c:	701a      	strb	r2, [r3, #0]
+                        break;
+ 800070e:	e038      	b.n	8000782 <Home_Automation_FSM_Update+0x11e>
+
+                    // ---------------- KỊCH BẢN RA KHỎI NHÀ ---------------- //
+                    case STATE_IR_DETECTED_OUT:
+                        if (door_open) {
+ 8000710:	79fb      	ldrb	r3, [r7, #7]
+ 8000712:	2b00      	cmp	r3, #0
+ 8000714:	d003      	beq.n	800071e <Home_Automation_FSM_Update+0xba>
+                            current_state = STATE_DOOR_OPENED_OUT;
+ 8000716:	4b20      	ldr	r3, [pc, #128]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 8000718:	2204      	movs	r2, #4
+ 800071a:	701a      	strb	r2, [r3, #0]
+                        }
+                        else if ((current_tick - state_timer) > SEQUENCE_TIMEOUT_MS) {
+                            current_state = STATE_IDLE; // Người đi ngang IR nhưng không mở cửa -> Reset
+                        }
+                        break;
+ 800071c:	e033      	b.n	8000786 <Home_Automation_FSM_Update+0x122>
+                        else if ((current_tick - state_timer) > SEQUENCE_TIMEOUT_MS) {
+ 800071e:	4b1f      	ldr	r3, [pc, #124]	@ (800079c <Home_Automation_FSM_Update+0x138>)
+ 8000720:	681b      	ldr	r3, [r3, #0]
+ 8000722:	683a      	ldr	r2, [r7, #0]
+ 8000724:	1ad3      	subs	r3, r2, r3
+ 8000726:	f242 7210 	movw	r2, #10000	@ 0x2710
+ 800072a:	4293      	cmp	r3, r2
+ 800072c:	d92b      	bls.n	8000786 <Home_Automation_FSM_Update+0x122>
+                            current_state = STATE_IDLE; // Người đi ngang IR nhưng không mở cửa -> Reset
+ 800072e:	4b1a      	ldr	r3, [pc, #104]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 8000730:	2200      	movs	r2, #0
+ 8000732:	701a      	strb	r2, [r3, #0]
+                        break;
+ 8000734:	e027      	b.n	8000786 <Home_Automation_FSM_Update+0x122>
+
+                    case STATE_DOOR_OPENED_OUT:
+                        // Ngoại lệ 2: Cửa không đóng lại -> FSM treo tại đây
+                        if (!door_open) { // Cửa đóng
+ 8000736:	79fb      	ldrb	r3, [r7, #7]
+ 8000738:	f083 0301 	eor.w	r3, r3, #1
+ 800073c:	b2db      	uxtb	r3, r3
+ 800073e:	2b00      	cmp	r3, #0
+ 8000740:	d023      	beq.n	800078a <Home_Automation_FSM_Update+0x126>
+                            current_state = STATE_COUNTDOWN_5MIN;
+ 8000742:	4b15      	ldr	r3, [pc, #84]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 8000744:	2205      	movs	r2, #5
+ 8000746:	701a      	strb	r2, [r3, #0]
+                            state_timer = current_tick; // Bắt đầu đếm 5 phút
+ 8000748:	4a14      	ldr	r2, [pc, #80]	@ (800079c <Home_Automation_FSM_Update+0x138>)
+ 800074a:	683b      	ldr	r3, [r7, #0]
+ 800074c:	6013      	str	r3, [r2, #0]
+                        }
+                        break;
+ 800074e:	e01c      	b.n	800078a <Home_Automation_FSM_Update+0x126>
+
+                    case STATE_COUNTDOWN_5MIN:
+                        // Ngoại lệ 1: Chủ nhà quay lại (IR có tín hiệu)
+                        if (ir_triggered) {
+ 8000750:	79bb      	ldrb	r3, [r7, #6]
+ 8000752:	2b00      	cmp	r3, #0
+ 8000754:	d003      	beq.n	800075e <Home_Automation_FSM_Update+0xfa>
+                            current_state = STATE_IDLE; // Lập tức hủy lệnh tắt
+ 8000756:	4b10      	ldr	r3, [pc, #64]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 8000758:	2200      	movs	r2, #0
+ 800075a:	701a      	strb	r2, [r3, #0]
+                        // Hết 5 phút
+                        else if ((current_tick - state_timer) > COUNTDOWN_5MIN_MS) {
+                        	relay_set_state(RELAY_OFF); // XÁC NHẬN RỜI ĐI
+                            current_state = STATE_IDLE;
+                        }
+                        break;
+ 800075c:	e017      	b.n	800078e <Home_Automation_FSM_Update+0x12a>
+                        else if ((current_tick - state_timer) > COUNTDOWN_5MIN_MS) {
+ 800075e:	4b0f      	ldr	r3, [pc, #60]	@ (800079c <Home_Automation_FSM_Update+0x138>)
+ 8000760:	681b      	ldr	r3, [r3, #0]
+ 8000762:	683a      	ldr	r2, [r7, #0]
+ 8000764:	1ad3      	subs	r3, r2, r3
+ 8000766:	4a0e      	ldr	r2, [pc, #56]	@ (80007a0 <Home_Automation_FSM_Update+0x13c>)
+ 8000768:	4293      	cmp	r3, r2
+ 800076a:	d910      	bls.n	800078e <Home_Automation_FSM_Update+0x12a>
+                        	relay_set_state(RELAY_OFF); // XÁC NHẬN RỜI ĐI
+ 800076c:	2000      	movs	r0, #0
+ 800076e:	f000 f867 	bl	8000840 <relay_set_state>
+                            current_state = STATE_IDLE;
+ 8000772:	4b09      	ldr	r3, [pc, #36]	@ (8000798 <Home_Automation_FSM_Update+0x134>)
+ 8000774:	2200      	movs	r2, #0
+ 8000776:	701a      	strb	r2, [r3, #0]
+                        break;
+ 8000778:	e009      	b.n	800078e <Home_Automation_FSM_Update+0x12a>
+            break;
+ 800077a:	bf00      	nop
+ 800077c:	e008      	b.n	8000790 <Home_Automation_FSM_Update+0x12c>
+                        break;
+ 800077e:	bf00      	nop
+ 8000780:	e006      	b.n	8000790 <Home_Automation_FSM_Update+0x12c>
+                        break;
+ 8000782:	bf00      	nop
+ 8000784:	e004      	b.n	8000790 <Home_Automation_FSM_Update+0x12c>
+                        break;
+ 8000786:	bf00      	nop
+ 8000788:	e002      	b.n	8000790 <Home_Automation_FSM_Update+0x12c>
+                        break;
+ 800078a:	bf00      	nop
+ 800078c:	e000      	b.n	8000790 <Home_Automation_FSM_Update+0x12c>
+                        break;
+ 800078e:	bf00      	nop
+                }
+
+    }
+ 8000790:	bf00      	nop
+ 8000792:	3708      	adds	r7, #8
+ 8000794:	46bd      	mov	sp, r7
+ 8000796:	bd80      	pop	{r7, pc}
+ 8000798:	20000025 	.word	0x20000025
+ 800079c:	20000028 	.word	0x20000028
+ 80007a0:	000493e0 	.word	0x000493e0
+
+080007a4 <main>:
+#include "spi1_lcd_st7789.h"
+#include "esp8266_mqtt.h"
+#define MAGNETIC_SENSOR 	(1U << 0)
+#define IR_SENSOR			(1U << 1)
+
+int main(void) {
+ 80007a4:	b580      	push	{r7, lr}
+ 80007a6:	af00      	add	r7, sp, #0
+
+	SysTick_Init();
+ 80007a8:	f000 fc3c 	bl	8001024 <SysTick_Init>
+
+	relay_driver_init();
+ 80007ac:	f000 f81e 	bl	80007ec <relay_driver_init>
+
+	sensor_exti_init();
+ 80007b0:	f000 f8b8 	bl	8000924 <sensor_exti_init>
+
+	spi1_gpio_init();
+ 80007b4:	f000 f968 	bl	8000a88 <spi1_gpio_init>
+
+	spi1_config();
+ 80007b8:	f000 f99c 	bl	8000af4 <spi1_config>
+
+	ILI9341_Init();
+ 80007bc:	f000 faa8 	bl	8000d10 <ILI9341_Init>
+
+	spi1_dma_init();
+ 80007c0:	f000 f9d0 	bl	8000b64 <spi1_dma_init>
+
+	ILI9341_FillColor(0xF800);
+ 80007c4:	f44f 4078 	mov.w	r0, #63488	@ 0xf800
+ 80007c8:	f000 fb4a 	bl	8000e60 <ILI9341_FillColor>
+
+	UART1_DMA_Init();
+ 80007cc:	f000 fc92 	bl	80010f4 <UART1_DMA_Init>
+
+	Home_Automation_FSM_Init();
+ 80007d0:	f7ff ff38 	bl	8000644 <Home_Automation_FSM_Init>
+
+	ESP8266_MQTT_Init();
+ 80007d4:	f7ff fcd4 	bl	8000180 <ESP8266_MQTT_Init>
+	while(1)
+	{
+	Home_Automation_FSM_Update();
+ 80007d8:	f7ff ff44 	bl	8000664 <Home_Automation_FSM_Update>
+
+	ESP8266_MQTT_Update();
+ 80007dc:	f7ff fd0a 	bl	80001f4 <ESP8266_MQTT_Update>
+
+	UART_Process_MQTT_Payload();
+ 80007e0:	f000 fd54 	bl	800128c <UART_Process_MQTT_Payload>
+
+	UART_Process_MQTT_Publish();
+ 80007e4:	f7ff fef2 	bl	80005cc <UART_Process_MQTT_Publish>
+	Home_Automation_FSM_Update();
+ 80007e8:	bf00      	nop
+ 80007ea:	e7f5      	b.n	80007d8 <main+0x34>
+
+080007ec <relay_driver_init>:
+
+// Biến toàn cục để module khác (UART/MQTT) có thể đọc
+volatile bool flag_relay_changed = false;
+volatile RelayState_t current_relay_state = RELAY_OFF;
+
+void relay_driver_init(void) {
+ 80007ec:	b480      	push	{r7}
+ 80007ee:	af00      	add	r7, sp, #0
+    RCC->APB2ENR |= (1U << 2);
+ 80007f0:	4b0f      	ldr	r3, [pc, #60]	@ (8000830 <relay_driver_init+0x44>)
+ 80007f2:	699b      	ldr	r3, [r3, #24]
+ 80007f4:	4a0e      	ldr	r2, [pc, #56]	@ (8000830 <relay_driver_init+0x44>)
+ 80007f6:	f043 0304 	orr.w	r3, r3, #4
+ 80007fa:	6193      	str	r3, [r2, #24]
+    GPIOA->CRH &= ~(0xFU);
+ 80007fc:	4b0d      	ldr	r3, [pc, #52]	@ (8000834 <relay_driver_init+0x48>)
+ 80007fe:	685b      	ldr	r3, [r3, #4]
+ 8000800:	4a0c      	ldr	r2, [pc, #48]	@ (8000834 <relay_driver_init+0x48>)
+ 8000802:	f023 030f 	bic.w	r3, r3, #15
+ 8000806:	6053      	str	r3, [r2, #4]
+    GPIOA->CRH |=  (1U<<1);
+ 8000808:	4b0a      	ldr	r3, [pc, #40]	@ (8000834 <relay_driver_init+0x48>)
+ 800080a:	685b      	ldr	r3, [r3, #4]
+ 800080c:	4a09      	ldr	r2, [pc, #36]	@ (8000834 <relay_driver_init+0x48>)
+ 800080e:	f043 0302 	orr.w	r3, r3, #2
+ 8000812:	6053      	str	r3, [r2, #4]
+
+    // Khởi tạo mặc định tắt
+    GPIOA->BSRR = (1U << (RELAY_PIN + 16));
+ 8000814:	4b07      	ldr	r3, [pc, #28]	@ (8000834 <relay_driver_init+0x48>)
+ 8000816:	f04f 7280 	mov.w	r2, #16777216	@ 0x1000000
+ 800081a:	611a      	str	r2, [r3, #16]
+    current_relay_state = RELAY_OFF;
+ 800081c:	4b06      	ldr	r3, [pc, #24]	@ (8000838 <relay_driver_init+0x4c>)
+ 800081e:	2200      	movs	r2, #0
+ 8000820:	701a      	strb	r2, [r3, #0]
+    flag_relay_changed = false;
+ 8000822:	4b06      	ldr	r3, [pc, #24]	@ (800083c <relay_driver_init+0x50>)
+ 8000824:	2200      	movs	r2, #0
+ 8000826:	701a      	strb	r2, [r3, #0]
+}
+ 8000828:	bf00      	nop
+ 800082a:	46bd      	mov	sp, r7
+ 800082c:	bc80      	pop	{r7}
+ 800082e:	4770      	bx	lr
+ 8000830:	40021000 	.word	0x40021000
+ 8000834:	40010800 	.word	0x40010800
+ 8000838:	2000002d 	.word	0x2000002d
+ 800083c:	2000002c 	.word	0x2000002c
+
+08000840 <relay_set_state>:
+
+void relay_set_state(RelayState_t new_state) {
+ 8000840:	b480      	push	{r7}
+ 8000842:	b083      	sub	sp, #12
+ 8000844:	af00      	add	r7, sp, #0
+ 8000846:	4603      	mov	r3, r0
+ 8000848:	71fb      	strb	r3, [r7, #7]
+    // Lọc trạng thái: Chỉ thực thi và bật cờ nếu trạng thái THỰC SỰ thay đổi
+    if (new_state == current_relay_state) {
+ 800084a:	4b10      	ldr	r3, [pc, #64]	@ (800088c <relay_set_state+0x4c>)
+ 800084c:	781b      	ldrb	r3, [r3, #0]
+ 800084e:	b2db      	uxtb	r3, r3
+ 8000850:	79fa      	ldrb	r2, [r7, #7]
+ 8000852:	429a      	cmp	r2, r3
+ 8000854:	d015      	beq.n	8000882 <relay_set_state+0x42>
+        return;
+    }
+
+    if (new_state == RELAY_ON) {
+ 8000856:	79fb      	ldrb	r3, [r7, #7]
+ 8000858:	2b01      	cmp	r3, #1
+ 800085a:	d104      	bne.n	8000866 <relay_set_state+0x26>
+        GPIOA->BSRR = (1U << RELAY_PIN);
+ 800085c:	4b0c      	ldr	r3, [pc, #48]	@ (8000890 <relay_set_state+0x50>)
+ 800085e:	f44f 7280 	mov.w	r2, #256	@ 0x100
+ 8000862:	611a      	str	r2, [r3, #16]
+ 8000864:	e006      	b.n	8000874 <relay_set_state+0x34>
+    }
+    else if (new_state == RELAY_OFF) {
+ 8000866:	79fb      	ldrb	r3, [r7, #7]
+ 8000868:	2b00      	cmp	r3, #0
+ 800086a:	d103      	bne.n	8000874 <relay_set_state+0x34>
+        GPIOA->BSRR = (1U << (RELAY_PIN + 16));
+ 800086c:	4b08      	ldr	r3, [pc, #32]	@ (8000890 <relay_set_state+0x50>)
+ 800086e:	f04f 7280 	mov.w	r2, #16777216	@ 0x1000000
+ 8000872:	611a      	str	r2, [r3, #16]
+    }
+
+    current_relay_state = new_state; // Lưu lại trạng thái mới
+ 8000874:	4a05      	ldr	r2, [pc, #20]	@ (800088c <relay_set_state+0x4c>)
+ 8000876:	79fb      	ldrb	r3, [r7, #7]
+ 8000878:	7013      	strb	r3, [r2, #0]
+    flag_relay_changed = true;       // Kích hoạt cờ báo cáo cho Server
+ 800087a:	4b06      	ldr	r3, [pc, #24]	@ (8000894 <relay_set_state+0x54>)
+ 800087c:	2201      	movs	r2, #1
+ 800087e:	701a      	strb	r2, [r3, #0]
+ 8000880:	e000      	b.n	8000884 <relay_set_state+0x44>
+        return;
+ 8000882:	bf00      	nop
+}
+ 8000884:	370c      	adds	r7, #12
+ 8000886:	46bd      	mov	sp, r7
+ 8000888:	bc80      	pop	{r7}
+ 800088a:	4770      	bx	lr
+ 800088c:	2000002d 	.word	0x2000002d
+ 8000890:	40010800 	.word	0x40010800
+ 8000894:	2000002c 	.word	0x2000002c
+
+08000898 <__NVIC_EnableIRQ>:
+  \details Enables a device specific interrupt in the NVIC interrupt controller.
+  \param [in]      IRQn  Device specific interrupt number.
+  \note    IRQn must not be negative.
+ */
+__STATIC_INLINE void __NVIC_EnableIRQ(IRQn_Type IRQn)
+{
+ 8000898:	b480      	push	{r7}
+ 800089a:	b083      	sub	sp, #12
+ 800089c:	af00      	add	r7, sp, #0
+ 800089e:	4603      	mov	r3, r0
+ 80008a0:	71fb      	strb	r3, [r7, #7]
+  if ((int32_t)(IRQn) >= 0)
+ 80008a2:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 80008a6:	2b00      	cmp	r3, #0
+ 80008a8:	db0b      	blt.n	80008c2 <__NVIC_EnableIRQ+0x2a>
+  {
+    NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
+ 80008aa:	79fb      	ldrb	r3, [r7, #7]
+ 80008ac:	f003 021f 	and.w	r2, r3, #31
+ 80008b0:	4906      	ldr	r1, [pc, #24]	@ (80008cc <__NVIC_EnableIRQ+0x34>)
+ 80008b2:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 80008b6:	095b      	lsrs	r3, r3, #5
+ 80008b8:	2001      	movs	r0, #1
+ 80008ba:	fa00 f202 	lsl.w	r2, r0, r2
+ 80008be:	f841 2023 	str.w	r2, [r1, r3, lsl #2]
+  }
+}
+ 80008c2:	bf00      	nop
+ 80008c4:	370c      	adds	r7, #12
+ 80008c6:	46bd      	mov	sp, r7
+ 80008c8:	bc80      	pop	{r7}
+ 80008ca:	4770      	bx	lr
+ 80008cc:	e000e100 	.word	0xe000e100
+
+080008d0 <__NVIC_SetPriority>:
+  \param [in]      IRQn  Interrupt number.
+  \param [in]  priority  Priority to set.
+  \note    The priority cannot be set for every processor exception.
+ */
+__STATIC_INLINE void __NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
+{
+ 80008d0:	b480      	push	{r7}
+ 80008d2:	b083      	sub	sp, #12
+ 80008d4:	af00      	add	r7, sp, #0
+ 80008d6:	4603      	mov	r3, r0
+ 80008d8:	6039      	str	r1, [r7, #0]
+ 80008da:	71fb      	strb	r3, [r7, #7]
+  if ((int32_t)(IRQn) >= 0)
+ 80008dc:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 80008e0:	2b00      	cmp	r3, #0
+ 80008e2:	db0a      	blt.n	80008fa <__NVIC_SetPriority+0x2a>
+  {
+    NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
+ 80008e4:	683b      	ldr	r3, [r7, #0]
+ 80008e6:	b2da      	uxtb	r2, r3
+ 80008e8:	490c      	ldr	r1, [pc, #48]	@ (800091c <__NVIC_SetPriority+0x4c>)
+ 80008ea:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 80008ee:	0112      	lsls	r2, r2, #4
+ 80008f0:	b2d2      	uxtb	r2, r2
+ 80008f2:	440b      	add	r3, r1
+ 80008f4:	f883 2300 	strb.w	r2, [r3, #768]	@ 0x300
+  }
+  else
+  {
+    SCB->SHP[(((uint32_t)IRQn) & 0xFUL)-4UL] = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
+  }
+}
+ 80008f8:	e00a      	b.n	8000910 <__NVIC_SetPriority+0x40>
+    SCB->SHP[(((uint32_t)IRQn) & 0xFUL)-4UL] = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
+ 80008fa:	683b      	ldr	r3, [r7, #0]
+ 80008fc:	b2da      	uxtb	r2, r3
+ 80008fe:	4908      	ldr	r1, [pc, #32]	@ (8000920 <__NVIC_SetPriority+0x50>)
+ 8000900:	79fb      	ldrb	r3, [r7, #7]
+ 8000902:	f003 030f 	and.w	r3, r3, #15
+ 8000906:	3b04      	subs	r3, #4
+ 8000908:	0112      	lsls	r2, r2, #4
+ 800090a:	b2d2      	uxtb	r2, r2
+ 800090c:	440b      	add	r3, r1
+ 800090e:	761a      	strb	r2, [r3, #24]
+}
+ 8000910:	bf00      	nop
+ 8000912:	370c      	adds	r7, #12
+ 8000914:	46bd      	mov	sp, r7
+ 8000916:	bc80      	pop	{r7}
+ 8000918:	4770      	bx	lr
+ 800091a:	bf00      	nop
+ 800091c:	e000e100 	.word	0xe000e100
+ 8000920:	e000ed00 	.word	0xe000ed00
+
+08000924 <sensor_exti_init>:
+
+//Cấu hình PA0 (Cửa), PA1 (IR)
+static volatile bool state_door = false;
+static volatile bool state_ir = false;
+
+void sensor_exti_init(void) {
+ 8000924:	b580      	push	{r7, lr}
+ 8000926:	af00      	add	r7, sp, #0
+  \details Disables IRQ interrupts by setting the I-bit in the CPSR.
+           Can only be executed in Privileged modes.
+ */
+__STATIC_FORCEINLINE void __disable_irq(void)
+{
+  __ASM volatile ("cpsid i" : : : "memory");
+ 8000928:	b672      	cpsid	i
+}
+ 800092a:	bf00      	nop
+	__disable_irq();
+
+	RCC->APB2ENR |= GPIOAEN | AFIOEN;
+ 800092c:	4b20      	ldr	r3, [pc, #128]	@ (80009b0 <sensor_exti_init+0x8c>)
+ 800092e:	699b      	ldr	r3, [r3, #24]
+ 8000930:	4a1f      	ldr	r2, [pc, #124]	@ (80009b0 <sensor_exti_init+0x8c>)
+ 8000932:	f043 0305 	orr.w	r3, r3, #5
+ 8000936:	6193      	str	r3, [r2, #24]
+
+	GPIOA->CRL &= ~((0xFU << (0 * 4)) | (0xFU << (1 * 4)));
+ 8000938:	4b1e      	ldr	r3, [pc, #120]	@ (80009b4 <sensor_exti_init+0x90>)
+ 800093a:	681b      	ldr	r3, [r3, #0]
+ 800093c:	4a1d      	ldr	r2, [pc, #116]	@ (80009b4 <sensor_exti_init+0x90>)
+ 800093e:	f023 03ff 	bic.w	r3, r3, #255	@ 0xff
+ 8000942:	6013      	str	r3, [r2, #0]
+
+    GPIOA->CRL |=  ((0x8U << (0 * 4)) | (0x8U << (1 * 4)));
+ 8000944:	4b1b      	ldr	r3, [pc, #108]	@ (80009b4 <sensor_exti_init+0x90>)
+ 8000946:	681b      	ldr	r3, [r3, #0]
+ 8000948:	4a1a      	ldr	r2, [pc, #104]	@ (80009b4 <sensor_exti_init+0x90>)
+ 800094a:	f043 0388 	orr.w	r3, r3, #136	@ 0x88
+ 800094e:	6013      	str	r3, [r2, #0]
+
+	GPIOA->ODR |= (1U << 0) | (1U << 1);
+ 8000950:	4b18      	ldr	r3, [pc, #96]	@ (80009b4 <sensor_exti_init+0x90>)
+ 8000952:	68db      	ldr	r3, [r3, #12]
+ 8000954:	4a17      	ldr	r2, [pc, #92]	@ (80009b4 <sensor_exti_init+0x90>)
+ 8000956:	f043 0303 	orr.w	r3, r3, #3
+ 800095a:	60d3      	str	r3, [r2, #12]
+
+	AFIO->EXTICR[0] &= ~((0xFU << (0 * 4)) | (0xFU << (1 * 4)));
+ 800095c:	4b16      	ldr	r3, [pc, #88]	@ (80009b8 <sensor_exti_init+0x94>)
+ 800095e:	689b      	ldr	r3, [r3, #8]
+ 8000960:	4a15      	ldr	r2, [pc, #84]	@ (80009b8 <sensor_exti_init+0x94>)
+ 8000962:	f023 03ff 	bic.w	r3, r3, #255	@ 0xff
+ 8000966:	6093      	str	r3, [r2, #8]
+
+	EXTI->IMR |= (1U<<0) | (1U<<1);
+ 8000968:	4b14      	ldr	r3, [pc, #80]	@ (80009bc <sensor_exti_init+0x98>)
+ 800096a:	681b      	ldr	r3, [r3, #0]
+ 800096c:	4a13      	ldr	r2, [pc, #76]	@ (80009bc <sensor_exti_init+0x98>)
+ 800096e:	f043 0303 	orr.w	r3, r3, #3
+ 8000972:	6013      	str	r3, [r2, #0]
+
+	EXTI->FTSR |= (1U << 0) | (1U << 1);
+ 8000974:	4b11      	ldr	r3, [pc, #68]	@ (80009bc <sensor_exti_init+0x98>)
+ 8000976:	68db      	ldr	r3, [r3, #12]
+ 8000978:	4a10      	ldr	r2, [pc, #64]	@ (80009bc <sensor_exti_init+0x98>)
+ 800097a:	f043 0303 	orr.w	r3, r3, #3
+ 800097e:	60d3      	str	r3, [r2, #12]
+	EXTI->RTSR |= (1U << 0) | (1U << 1);
+ 8000980:	4b0e      	ldr	r3, [pc, #56]	@ (80009bc <sensor_exti_init+0x98>)
+ 8000982:	689b      	ldr	r3, [r3, #8]
+ 8000984:	4a0d      	ldr	r2, [pc, #52]	@ (80009bc <sensor_exti_init+0x98>)
+ 8000986:	f043 0303 	orr.w	r3, r3, #3
+ 800098a:	6093      	str	r3, [r2, #8]
+
+	NVIC_SetPriority(EXTI0_IRQn, 1);
+ 800098c:	2101      	movs	r1, #1
+ 800098e:	2006      	movs	r0, #6
+ 8000990:	f7ff ff9e 	bl	80008d0 <__NVIC_SetPriority>
+	NVIC_SetPriority(EXTI1_IRQn, 2);
+ 8000994:	2102      	movs	r1, #2
+ 8000996:	2007      	movs	r0, #7
+ 8000998:	f7ff ff9a 	bl	80008d0 <__NVIC_SetPriority>
+	NVIC_EnableIRQ(EXTI0_IRQn);
+ 800099c:	2006      	movs	r0, #6
+ 800099e:	f7ff ff7b 	bl	8000898 <__NVIC_EnableIRQ>
+	NVIC_EnableIRQ(EXTI1_IRQn);
+ 80009a2:	2007      	movs	r0, #7
+ 80009a4:	f7ff ff78 	bl	8000898 <__NVIC_EnableIRQ>
+  __ASM volatile ("cpsie i" : : : "memory");
+ 80009a8:	b662      	cpsie	i
+}
+ 80009aa:	bf00      	nop
+
+	__enable_irq();
+}
+ 80009ac:	bf00      	nop
+ 80009ae:	bd80      	pop	{r7, pc}
+ 80009b0:	40021000 	.word	0x40021000
+ 80009b4:	40010800 	.word	0x40010800
+ 80009b8:	40010000 	.word	0x40010000
+ 80009bc:	40010400 	.word	0x40010400
+
+080009c0 <EXTI0_IRQHandler>:
+// Hàm ngắt PA0 (Cảm biến từ - Cửa)
+void EXTI0_IRQHandler(void) {
+ 80009c0:	b480      	push	{r7}
+ 80009c2:	af00      	add	r7, sp, #0
+    if (EXTI->PR & (1U << 0)) {
+ 80009c4:	4b0e      	ldr	r3, [pc, #56]	@ (8000a00 <EXTI0_IRQHandler+0x40>)
+ 80009c6:	695b      	ldr	r3, [r3, #20]
+ 80009c8:	f003 0301 	and.w	r3, r3, #1
+ 80009cc:	2b00      	cmp	r3, #0
+ 80009ce:	d012      	beq.n	80009f6 <EXTI0_IRQHandler+0x36>
+        EXTI->PR |= (1U << 0); // Xóa cờ ngắt phần cứng
+ 80009d0:	4b0b      	ldr	r3, [pc, #44]	@ (8000a00 <EXTI0_IRQHandler+0x40>)
+ 80009d2:	695b      	ldr	r3, [r3, #20]
+ 80009d4:	4a0a      	ldr	r2, [pc, #40]	@ (8000a00 <EXTI0_IRQHandler+0x40>)
+ 80009d6:	f043 0301 	orr.w	r3, r3, #1
+ 80009da:	6153      	str	r3, [r2, #20]
+
+        // Đọc lại thanh ghi IDR để chốt trạng thái vật lý thực tế
+        // (Lưu ý: Nếu làm thực tế, cần tích hợp thêm thuật toán Debounce tại đây)
+        if (GPIOA->IDR & (1U << 0)) {
+ 80009dc:	4b09      	ldr	r3, [pc, #36]	@ (8000a04 <EXTI0_IRQHandler+0x44>)
+ 80009de:	689b      	ldr	r3, [r3, #8]
+ 80009e0:	f003 0301 	and.w	r3, r3, #1
+ 80009e4:	2b00      	cmp	r3, #0
+ 80009e6:	d003      	beq.n	80009f0 <EXTI0_IRQHandler+0x30>
+            state_door = true;  // Chân PA0 bị thả nổi lên mức 1 -> Cửa Mở
+ 80009e8:	4b07      	ldr	r3, [pc, #28]	@ (8000a08 <EXTI0_IRQHandler+0x48>)
+ 80009ea:	2201      	movs	r2, #1
+ 80009ec:	701a      	strb	r2, [r3, #0]
+        } else {
+            state_door = false; // Chân PA0 bị kéo xuống mức 0 -> Cửa Đóng
+        }
+    }
+}
+ 80009ee:	e002      	b.n	80009f6 <EXTI0_IRQHandler+0x36>
+            state_door = false; // Chân PA0 bị kéo xuống mức 0 -> Cửa Đóng
+ 80009f0:	4b05      	ldr	r3, [pc, #20]	@ (8000a08 <EXTI0_IRQHandler+0x48>)
+ 80009f2:	2200      	movs	r2, #0
+ 80009f4:	701a      	strb	r2, [r3, #0]
+}
+ 80009f6:	bf00      	nop
+ 80009f8:	46bd      	mov	sp, r7
+ 80009fa:	bc80      	pop	{r7}
+ 80009fc:	4770      	bx	lr
+ 80009fe:	bf00      	nop
+ 8000a00:	40010400 	.word	0x40010400
+ 8000a04:	40010800 	.word	0x40010800
+ 8000a08:	2000002e 	.word	0x2000002e
+
+08000a0c <EXTI1_IRQHandler>:
+
+// Hàm ngắt PA1 (Cảm biến IR)
+void EXTI1_IRQHandler(void) {
+ 8000a0c:	b480      	push	{r7}
+ 8000a0e:	af00      	add	r7, sp, #0
+    if (EXTI->PR & (1U << 1)) {
+ 8000a10:	4b0e      	ldr	r3, [pc, #56]	@ (8000a4c <EXTI1_IRQHandler+0x40>)
+ 8000a12:	695b      	ldr	r3, [r3, #20]
+ 8000a14:	f003 0302 	and.w	r3, r3, #2
+ 8000a18:	2b00      	cmp	r3, #0
+ 8000a1a:	d012      	beq.n	8000a42 <EXTI1_IRQHandler+0x36>
+        EXTI->PR |= (1U << 1);
+ 8000a1c:	4b0b      	ldr	r3, [pc, #44]	@ (8000a4c <EXTI1_IRQHandler+0x40>)
+ 8000a1e:	695b      	ldr	r3, [r3, #20]
+ 8000a20:	4a0a      	ldr	r2, [pc, #40]	@ (8000a4c <EXTI1_IRQHandler+0x40>)
+ 8000a22:	f043 0302 	orr.w	r3, r3, #2
+ 8000a26:	6153      	str	r3, [r2, #20]
+
+        if ((GPIOA->IDR & (1U << 1)) == 0) {
+ 8000a28:	4b09      	ldr	r3, [pc, #36]	@ (8000a50 <EXTI1_IRQHandler+0x44>)
+ 8000a2a:	689b      	ldr	r3, [r3, #8]
+ 8000a2c:	f003 0302 	and.w	r3, r3, #2
+ 8000a30:	2b00      	cmp	r3, #0
+ 8000a32:	d103      	bne.n	8000a3c <EXTI1_IRQHandler+0x30>
+            state_ir = true; // Kéo xuống mức 0 -> Có người
+ 8000a34:	4b07      	ldr	r3, [pc, #28]	@ (8000a54 <EXTI1_IRQHandler+0x48>)
+ 8000a36:	2201      	movs	r2, #1
+ 8000a38:	701a      	strb	r2, [r3, #0]
+        } else {
+            state_ir = false;
+        }
+    }
+}
+ 8000a3a:	e002      	b.n	8000a42 <EXTI1_IRQHandler+0x36>
+            state_ir = false;
+ 8000a3c:	4b05      	ldr	r3, [pc, #20]	@ (8000a54 <EXTI1_IRQHandler+0x48>)
+ 8000a3e:	2200      	movs	r2, #0
+ 8000a40:	701a      	strb	r2, [r3, #0]
+}
+ 8000a42:	bf00      	nop
+ 8000a44:	46bd      	mov	sp, r7
+ 8000a46:	bc80      	pop	{r7}
+ 8000a48:	4770      	bx	lr
+ 8000a4a:	bf00      	nop
+ 8000a4c:	40010400 	.word	0x40010400
+ 8000a50:	40010800 	.word	0x40010800
+ 8000a54:	2000002f 	.word	0x2000002f
+
+08000a58 <Is_Door_Open>:
+
+bool Is_Door_Open(void) {
+ 8000a58:	b480      	push	{r7}
+ 8000a5a:	af00      	add	r7, sp, #0
+    return state_door;
+ 8000a5c:	4b03      	ldr	r3, [pc, #12]	@ (8000a6c <Is_Door_Open+0x14>)
+ 8000a5e:	781b      	ldrb	r3, [r3, #0]
+ 8000a60:	b2db      	uxtb	r3, r3
+}
+ 8000a62:	4618      	mov	r0, r3
+ 8000a64:	46bd      	mov	sp, r7
+ 8000a66:	bc80      	pop	{r7}
+ 8000a68:	4770      	bx	lr
+ 8000a6a:	bf00      	nop
+ 8000a6c:	2000002e 	.word	0x2000002e
+
+08000a70 <Is_IR_Triggered>:
+
+bool Is_IR_Triggered(void) {
+ 8000a70:	b480      	push	{r7}
+ 8000a72:	af00      	add	r7, sp, #0
+    return state_ir;
+ 8000a74:	4b03      	ldr	r3, [pc, #12]	@ (8000a84 <Is_IR_Triggered+0x14>)
+ 8000a76:	781b      	ldrb	r3, [r3, #0]
+ 8000a78:	b2db      	uxtb	r3, r3
+}
+ 8000a7a:	4618      	mov	r0, r3
+ 8000a7c:	46bd      	mov	sp, r7
+ 8000a7e:	bc80      	pop	{r7}
+ 8000a80:	4770      	bx	lr
+ 8000a82:	bf00      	nop
+ 8000a84:	2000002f 	.word	0x2000002f
+
+08000a88 <spi1_gpio_init>:
+#define DMA_CCR_DIR     (1U << 4) // Hướng Truyền: Memory to Peripheral
+#define DMA_CCR_MINC    (1U << 7) // Tự động tăng địa chỉ Memory
+#define DMA_ISR_TCIF3   (1U << 9) // Cờ hoàn thành truyền Channel 3
+#define DMA_IFCR_CGIF3  (1U << 8) // Cờ xóa ngắt Global Channel 3
+void spi1_gpio_init(void)
+{
+ 8000a88:	b480      	push	{r7}
+ 8000a8a:	af00      	add	r7, sp, #0
+	RCC->APB2ENR |= GPIOAEN | GPIOBEN | AFIOEN | SPI1EN;
+ 8000a8c:	4b14      	ldr	r3, [pc, #80]	@ (8000ae0 <spi1_gpio_init+0x58>)
+ 8000a8e:	699b      	ldr	r3, [r3, #24]
+ 8000a90:	4a13      	ldr	r2, [pc, #76]	@ (8000ae0 <spi1_gpio_init+0x58>)
+ 8000a92:	f443 5380 	orr.w	r3, r3, #4096	@ 0x1000
+ 8000a96:	f043 030e 	orr.w	r3, r3, #14
+ 8000a9a:	6193      	str	r3, [r2, #24]
+
+	GPIOA->BSRR = (1 << 4) | (1 << 3) | (1 << 2); // CS, DC, RES
+ 8000a9c:	4b11      	ldr	r3, [pc, #68]	@ (8000ae4 <spi1_gpio_init+0x5c>)
+ 8000a9e:	221c      	movs	r2, #28
+ 8000aa0:	611a      	str	r2, [r3, #16]
+	GPIOB->BSRR = (1 << 0);                       // BLK trên PB0
+ 8000aa2:	4b11      	ldr	r3, [pc, #68]	@ (8000ae8 <spi1_gpio_init+0x60>)
+ 8000aa4:	2201      	movs	r2, #1
+ 8000aa6:	611a      	str	r2, [r3, #16]
+
+	GPIOA->CRL &= ~((0xFU << 8)  | // PA2
+ 8000aa8:	4b0e      	ldr	r3, [pc, #56]	@ (8000ae4 <spi1_gpio_init+0x5c>)
+ 8000aaa:	681a      	ldr	r2, [r3, #0]
+ 8000aac:	490d      	ldr	r1, [pc, #52]	@ (8000ae4 <spi1_gpio_init+0x5c>)
+ 8000aae:	4b0f      	ldr	r3, [pc, #60]	@ (8000aec <spi1_gpio_init+0x64>)
+ 8000ab0:	4013      	ands	r3, r2
+ 8000ab2:	600b      	str	r3, [r1, #0]
+	                    (0xFU << 16) | // PA4
+	                    (0xFU << 20) | // PA5
+	                    (0xFU << 28)); // PA7
+
+
+	    GPIOA->CRL |=  ((0x3U << 8)  | // PA2: Output Push-Pull (50MHz)
+ 8000ab4:	4b0b      	ldr	r3, [pc, #44]	@ (8000ae4 <spi1_gpio_init+0x5c>)
+ 8000ab6:	681a      	ldr	r2, [r3, #0]
+ 8000ab8:	490a      	ldr	r1, [pc, #40]	@ (8000ae4 <spi1_gpio_init+0x5c>)
+ 8000aba:	4b0d      	ldr	r3, [pc, #52]	@ (8000af0 <spi1_gpio_init+0x68>)
+ 8000abc:	4313      	orrs	r3, r2
+ 8000abe:	600b      	str	r3, [r1, #0]
+	                    (0xBU << 20) | // PA5: Alternate Function Push-Pull
+	                    (0xBU << 28)); // PA7: Alternate Function Push-Pull
+
+
+
+	    GPIOB->CRL &= ~(0xFU << 0);
+ 8000ac0:	4b09      	ldr	r3, [pc, #36]	@ (8000ae8 <spi1_gpio_init+0x60>)
+ 8000ac2:	681b      	ldr	r3, [r3, #0]
+ 8000ac4:	4a08      	ldr	r2, [pc, #32]	@ (8000ae8 <spi1_gpio_init+0x60>)
+ 8000ac6:	f023 030f 	bic.w	r3, r3, #15
+ 8000aca:	6013      	str	r3, [r2, #0]
+	    GPIOB->CRL |=  (0x3U << 0);
+ 8000acc:	4b06      	ldr	r3, [pc, #24]	@ (8000ae8 <spi1_gpio_init+0x60>)
+ 8000ace:	681b      	ldr	r3, [r3, #0]
+ 8000ad0:	4a05      	ldr	r2, [pc, #20]	@ (8000ae8 <spi1_gpio_init+0x60>)
+ 8000ad2:	f043 0303 	orr.w	r3, r3, #3
+ 8000ad6:	6013      	str	r3, [r2, #0]
+}
+ 8000ad8:	bf00      	nop
+ 8000ada:	46bd      	mov	sp, r7
+ 8000adc:	bc80      	pop	{r7}
+ 8000ade:	4770      	bx	lr
+ 8000ae0:	40021000 	.word	0x40021000
+ 8000ae4:	40010800 	.word	0x40010800
+ 8000ae8:	40010c00 	.word	0x40010c00
+ 8000aec:	0f0000ff 	.word	0x0f0000ff
+ 8000af0:	b0b33300 	.word	0xb0b33300
+
+08000af4 <spi1_config>:
+
+
+void spi1_config(void)
+{
+ 8000af4:	b480      	push	{r7}
+ 8000af6:	af00      	add	r7, sp, #0
+	SPI1->CR1 &= ~RXONLY;
+ 8000af8:	4b19      	ldr	r3, [pc, #100]	@ (8000b60 <spi1_config+0x6c>)
+ 8000afa:	681b      	ldr	r3, [r3, #0]
+ 8000afc:	4a18      	ldr	r2, [pc, #96]	@ (8000b60 <spi1_config+0x6c>)
+ 8000afe:	f423 6380 	bic.w	r3, r3, #1024	@ 0x400
+ 8000b02:	6013      	str	r3, [r2, #0]
+	SPI1->CR1 &= ~LSBFIRST;
+ 8000b04:	4b16      	ldr	r3, [pc, #88]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b06:	681b      	ldr	r3, [r3, #0]
+ 8000b08:	4a15      	ldr	r2, [pc, #84]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b0a:	f023 0380 	bic.w	r3, r3, #128	@ 0x80
+ 8000b0e:	6013      	str	r3, [r2, #0]
+	SPI1->CR1 |= MSTR;
+ 8000b10:	4b13      	ldr	r3, [pc, #76]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b12:	681b      	ldr	r3, [r3, #0]
+ 8000b14:	4a12      	ldr	r2, [pc, #72]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b16:	f043 0304 	orr.w	r3, r3, #4
+ 8000b1a:	6013      	str	r3, [r2, #0]
+	SPI1->CR1 &= ~DFF;
+ 8000b1c:	4b10      	ldr	r3, [pc, #64]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b1e:	681b      	ldr	r3, [r3, #0]
+ 8000b20:	4a0f      	ldr	r2, [pc, #60]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b22:	f423 6300 	bic.w	r3, r3, #2048	@ 0x800
+ 8000b26:	6013      	str	r3, [r2, #0]
+	SPI1->CR1 |= SSI;
+ 8000b28:	4b0d      	ldr	r3, [pc, #52]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b2a:	681b      	ldr	r3, [r3, #0]
+ 8000b2c:	4a0c      	ldr	r2, [pc, #48]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b2e:	f443 7380 	orr.w	r3, r3, #256	@ 0x100
+ 8000b32:	6013      	str	r3, [r2, #0]
+	SPI1->CR1 |= SSM;
+ 8000b34:	4b0a      	ldr	r3, [pc, #40]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b36:	681b      	ldr	r3, [r3, #0]
+ 8000b38:	4a09      	ldr	r2, [pc, #36]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b3a:	f443 7300 	orr.w	r3, r3, #512	@ 0x200
+ 8000b3e:	6013      	str	r3, [r2, #0]
+
+	// KÍCH HOẠT: Yêu cầu DMA khi buffer TX của SPI trống
+	    SPI1->CR2 |= SPI_CR2_TXDMAEN;
+ 8000b40:	4b07      	ldr	r3, [pc, #28]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b42:	685b      	ldr	r3, [r3, #4]
+ 8000b44:	4a06      	ldr	r2, [pc, #24]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b46:	f043 0302 	orr.w	r3, r3, #2
+ 8000b4a:	6053      	str	r3, [r2, #4]
+
+	SPI1->CR1 |= SPEN;
+ 8000b4c:	4b04      	ldr	r3, [pc, #16]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b4e:	681b      	ldr	r3, [r3, #0]
+ 8000b50:	4a03      	ldr	r2, [pc, #12]	@ (8000b60 <spi1_config+0x6c>)
+ 8000b52:	f043 0340 	orr.w	r3, r3, #64	@ 0x40
+ 8000b56:	6013      	str	r3, [r2, #0]
+}
+ 8000b58:	bf00      	nop
+ 8000b5a:	46bd      	mov	sp, r7
+ 8000b5c:	bc80      	pop	{r7}
+ 8000b5e:	4770      	bx	lr
+ 8000b60:	40013000 	.word	0x40013000
+
+08000b64 <spi1_dma_init>:
+
+void spi1_dma_init(void) {
+ 8000b64:	b480      	push	{r7}
+ 8000b66:	af00      	add	r7, sp, #0
+    // 1. Cấp xung nhịp cho DMA1
+    RCC->AHBENR |= DMA1EN;
+ 8000b68:	4b0a      	ldr	r3, [pc, #40]	@ (8000b94 <spi1_dma_init+0x30>)
+ 8000b6a:	695b      	ldr	r3, [r3, #20]
+ 8000b6c:	4a09      	ldr	r2, [pc, #36]	@ (8000b94 <spi1_dma_init+0x30>)
+ 8000b6e:	f043 0301 	orr.w	r3, r3, #1
+ 8000b72:	6153      	str	r3, [r2, #20]
+
+    // 2. Tắt Channel 3 trước khi cấu hình (Bảo vệ phần cứng)
+    DMA1_Channel3->CCR &= ~DMA_CCR_EN;
+ 8000b74:	4b08      	ldr	r3, [pc, #32]	@ (8000b98 <spi1_dma_init+0x34>)
+ 8000b76:	681b      	ldr	r3, [r3, #0]
+ 8000b78:	4a07      	ldr	r2, [pc, #28]	@ (8000b98 <spi1_dma_init+0x34>)
+ 8000b7a:	f023 0301 	bic.w	r3, r3, #1
+ 8000b7e:	6013      	str	r3, [r2, #0]
+
+    // 3. Trỏ địa chỉ Ngoại vi (Peripheral) cố định vào thanh ghi Data của SPI1
+    DMA1_Channel3->CPAR = (uint32_t)&SPI1->DR;
+ 8000b80:	4b05      	ldr	r3, [pc, #20]	@ (8000b98 <spi1_dma_init+0x34>)
+ 8000b82:	4a06      	ldr	r2, [pc, #24]	@ (8000b9c <spi1_dma_init+0x38>)
+ 8000b84:	609a      	str	r2, [r3, #8]
+
+    // 4. Cấu hình Channel 3: Hướng Mem->Periph, Auto-increment Memory
+    // MSIZE = 0 (8-bit), PSIZE = 0 (8-bit), không dùng ngắt (Polling cờ ISR)
+    DMA1_Channel3->CCR = DMA_CCR_DIR | DMA_CCR_MINC;
+ 8000b86:	4b04      	ldr	r3, [pc, #16]	@ (8000b98 <spi1_dma_init+0x34>)
+ 8000b88:	2290      	movs	r2, #144	@ 0x90
+ 8000b8a:	601a      	str	r2, [r3, #0]
+}
+ 8000b8c:	bf00      	nop
+ 8000b8e:	46bd      	mov	sp, r7
+ 8000b90:	bc80      	pop	{r7}
+ 8000b92:	4770      	bx	lr
+ 8000b94:	40021000 	.word	0x40021000
+ 8000b98:	40020030 	.word	0x40020030
+ 8000b9c:	4001300c 	.word	0x4001300c
+
+08000ba0 <spi1_dma_transmit>:
+
+// Hàm gửi dữ liệu Non-blocking / Blocking-on-Start
+void spi1_dma_transmit(uint8_t *data, uint32_t size) {
+ 8000ba0:	b480      	push	{r7}
+ 8000ba2:	b083      	sub	sp, #12
+ 8000ba4:	af00      	add	r7, sp, #0
+ 8000ba6:	6078      	str	r0, [r7, #4]
+ 8000ba8:	6039      	str	r1, [r7, #0]
+    // Đợi nếu DMA vẫn đang bận gửi gói trước đó
+    if (DMA1_Channel3->CCR & DMA_CCR_EN) {
+ 8000baa:	4b14      	ldr	r3, [pc, #80]	@ (8000bfc <spi1_dma_transmit+0x5c>)
+ 8000bac:	681b      	ldr	r3, [r3, #0]
+ 8000bae:	f003 0301 	and.w	r3, r3, #1
+ 8000bb2:	2b00      	cmp	r3, #0
+ 8000bb4:	d006      	beq.n	8000bc4 <spi1_dma_transmit+0x24>
+        while (!(DMA1->ISR & DMA_ISR_TCIF3)) {}
+ 8000bb6:	bf00      	nop
+ 8000bb8:	4b11      	ldr	r3, [pc, #68]	@ (8000c00 <spi1_dma_transmit+0x60>)
+ 8000bba:	681b      	ldr	r3, [r3, #0]
+ 8000bbc:	f403 7300 	and.w	r3, r3, #512	@ 0x200
+ 8000bc0:	2b00      	cmp	r3, #0
+ 8000bc2:	d0f9      	beq.n	8000bb8 <spi1_dma_transmit+0x18>
+    }
+
+    // Tắt DMA, xóa cờ để chuẩn bị tải gói mới
+    DMA1_Channel3->CCR &= ~DMA_CCR_EN;
+ 8000bc4:	4b0d      	ldr	r3, [pc, #52]	@ (8000bfc <spi1_dma_transmit+0x5c>)
+ 8000bc6:	681b      	ldr	r3, [r3, #0]
+ 8000bc8:	4a0c      	ldr	r2, [pc, #48]	@ (8000bfc <spi1_dma_transmit+0x5c>)
+ 8000bca:	f023 0301 	bic.w	r3, r3, #1
+ 8000bce:	6013      	str	r3, [r2, #0]
+    DMA1->IFCR = DMA_IFCR_CGIF3;
+ 8000bd0:	4b0b      	ldr	r3, [pc, #44]	@ (8000c00 <spi1_dma_transmit+0x60>)
+ 8000bd2:	f44f 7280 	mov.w	r2, #256	@ 0x100
+ 8000bd6:	605a      	str	r2, [r3, #4]
+
+    // Nạp địa chỉ bắt đầu của Buffer và số lượng Byte cần bắn
+    DMA1_Channel3->CMAR = (uint32_t)data;
+ 8000bd8:	4a08      	ldr	r2, [pc, #32]	@ (8000bfc <spi1_dma_transmit+0x5c>)
+ 8000bda:	687b      	ldr	r3, [r7, #4]
+ 8000bdc:	60d3      	str	r3, [r2, #12]
+    DMA1_Channel3->CNDTR = size;
+ 8000bde:	4a07      	ldr	r2, [pc, #28]	@ (8000bfc <spi1_dma_transmit+0x5c>)
+ 8000be0:	683b      	ldr	r3, [r7, #0]
+ 8000be2:	6053      	str	r3, [r2, #4]
+
+    // Bật lại DMA, phần cứng tự động rút data đưa vào SPI
+    DMA1_Channel3->CCR |= DMA_CCR_EN;
+ 8000be4:	4b05      	ldr	r3, [pc, #20]	@ (8000bfc <spi1_dma_transmit+0x5c>)
+ 8000be6:	681b      	ldr	r3, [r3, #0]
+ 8000be8:	4a04      	ldr	r2, [pc, #16]	@ (8000bfc <spi1_dma_transmit+0x5c>)
+ 8000bea:	f043 0301 	orr.w	r3, r3, #1
+ 8000bee:	6013      	str	r3, [r2, #0]
+}
+ 8000bf0:	bf00      	nop
+ 8000bf2:	370c      	adds	r7, #12
+ 8000bf4:	46bd      	mov	sp, r7
+ 8000bf6:	bc80      	pop	{r7}
+ 8000bf8:	4770      	bx	lr
+ 8000bfa:	bf00      	nop
+ 8000bfc:	40020030 	.word	0x40020030
+ 8000c00:	40020000 	.word	0x40020000
+
+08000c04 <spi1_dma_wait_complete>:
+
+// Hàm đợi phần cứng hoàn tất thực sự (Quan trọng khi điều khiển chân CS/DC)
+void spi1_dma_wait_complete(void) {
+ 8000c04:	b480      	push	{r7}
+ 8000c06:	af00      	add	r7, sp, #0
+    // 1. Đợi DMA đẩy xong byte cuối cùng vào thanh ghi của SPI
+    while (!(DMA1->ISR & DMA_ISR_TCIF3)) {}
+ 8000c08:	bf00      	nop
+ 8000c0a:	4b09      	ldr	r3, [pc, #36]	@ (8000c30 <spi1_dma_wait_complete+0x2c>)
+ 8000c0c:	681b      	ldr	r3, [r3, #0]
+ 8000c0e:	f403 7300 	and.w	r3, r3, #512	@ 0x200
+ 8000c12:	2b00      	cmp	r3, #0
+ 8000c14:	d0f9      	beq.n	8000c0a <spi1_dma_wait_complete+0x6>
+
+    // 2. Đợi bản thân SPI shift xong bit cuối cùng ra đường dây vật lý MOSI
+    while (SPI1->SR & SR_BSY) {}
+ 8000c16:	bf00      	nop
+ 8000c18:	4b06      	ldr	r3, [pc, #24]	@ (8000c34 <spi1_dma_wait_complete+0x30>)
+ 8000c1a:	689b      	ldr	r3, [r3, #8]
+ 8000c1c:	f003 0380 	and.w	r3, r3, #128	@ 0x80
+ 8000c20:	2b00      	cmp	r3, #0
+ 8000c22:	d1f9      	bne.n	8000c18 <spi1_dma_wait_complete+0x14>
+}
+ 8000c24:	bf00      	nop
+ 8000c26:	bf00      	nop
+ 8000c28:	46bd      	mov	sp, r7
+ 8000c2a:	bc80      	pop	{r7}
+ 8000c2c:	4770      	bx	lr
+ 8000c2e:	bf00      	nop
+ 8000c30:	40020000 	.word	0x40020000
+ 8000c34:	40013000 	.word	0x40013000
+
+08000c38 <Delay_ms>:
+
+// Hàm trễ Non-blocking cơ bản dựa trên SysTick
+static void Delay_ms(uint32_t ms) {
+ 8000c38:	b580      	push	{r7, lr}
+ 8000c3a:	b084      	sub	sp, #16
+ 8000c3c:	af00      	add	r7, sp, #0
+ 8000c3e:	6078      	str	r0, [r7, #4]
+    uint32_t start = Get_System_Tick();
+ 8000c40:	f000 fa08 	bl	8001054 <Get_System_Tick>
+ 8000c44:	60f8      	str	r0, [r7, #12]
+    while ((Get_System_Tick() - start) < ms);
+ 8000c46:	bf00      	nop
+ 8000c48:	f000 fa04 	bl	8001054 <Get_System_Tick>
+ 8000c4c:	4602      	mov	r2, r0
+ 8000c4e:	68fb      	ldr	r3, [r7, #12]
+ 8000c50:	1ad3      	subs	r3, r2, r3
+ 8000c52:	687a      	ldr	r2, [r7, #4]
+ 8000c54:	429a      	cmp	r2, r3
+ 8000c56:	d8f7      	bhi.n	8000c48 <Delay_ms+0x10>
+}
+ 8000c58:	bf00      	nop
+ 8000c5a:	bf00      	nop
+ 8000c5c:	3710      	adds	r7, #16
+ 8000c5e:	46bd      	mov	sp, r7
+ 8000c60:	bd80      	pop	{r7, pc}
+	...
+
+08000c64 <SPI_SendByte>:
+
+// Hàm gửi 1 Byte Polling tốc độ cao (Bỏ qua cấu trúc rườm rà)
+static void SPI_SendByte(uint8_t byte) {
+ 8000c64:	b480      	push	{r7}
+ 8000c66:	b083      	sub	sp, #12
+ 8000c68:	af00      	add	r7, sp, #0
+ 8000c6a:	4603      	mov	r3, r0
+ 8000c6c:	71fb      	strb	r3, [r7, #7]
+    while(!(SPI1->SR & SR_TXE)) {}  // Đợi thanh ghi trống
+ 8000c6e:	bf00      	nop
+ 8000c70:	4b0e      	ldr	r3, [pc, #56]	@ (8000cac <SPI_SendByte+0x48>)
+ 8000c72:	689b      	ldr	r3, [r3, #8]
+ 8000c74:	f003 0302 	and.w	r3, r3, #2
+ 8000c78:	2b00      	cmp	r3, #0
+ 8000c7a:	d0f9      	beq.n	8000c70 <SPI_SendByte+0xc>
+    SPI1->DR = byte;                // Đẩy data
+ 8000c7c:	4a0b      	ldr	r2, [pc, #44]	@ (8000cac <SPI_SendByte+0x48>)
+ 8000c7e:	79fb      	ldrb	r3, [r7, #7]
+ 8000c80:	60d3      	str	r3, [r2, #12]
+    while(!(SPI1->SR & SR_TXE)) {}  // Đợi đẩy xong vào Shift Register
+ 8000c82:	bf00      	nop
+ 8000c84:	4b09      	ldr	r3, [pc, #36]	@ (8000cac <SPI_SendByte+0x48>)
+ 8000c86:	689b      	ldr	r3, [r3, #8]
+ 8000c88:	f003 0302 	and.w	r3, r3, #2
+ 8000c8c:	2b00      	cmp	r3, #0
+ 8000c8e:	d0f9      	beq.n	8000c84 <SPI_SendByte+0x20>
+    while(SPI1->SR & SR_BSY) {}     // Đợi nhịp Clock cuối cùng kết thúc
+ 8000c90:	bf00      	nop
+ 8000c92:	4b06      	ldr	r3, [pc, #24]	@ (8000cac <SPI_SendByte+0x48>)
+ 8000c94:	689b      	ldr	r3, [r3, #8]
+ 8000c96:	f003 0380 	and.w	r3, r3, #128	@ 0x80
+ 8000c9a:	2b00      	cmp	r3, #0
+ 8000c9c:	d1f9      	bne.n	8000c92 <SPI_SendByte+0x2e>
+}
+ 8000c9e:	bf00      	nop
+ 8000ca0:	bf00      	nop
+ 8000ca2:	370c      	adds	r7, #12
+ 8000ca4:	46bd      	mov	sp, r7
+ 8000ca6:	bc80      	pop	{r7}
+ 8000ca8:	4770      	bx	lr
+ 8000caa:	bf00      	nop
+ 8000cac:	40013000 	.word	0x40013000
+
+08000cb0 <ILI9341_SendCommand>:
+//
+//    // Lệnh chuẩn bị ghi RAM (Memory Write) - Ngay sau lệnh này là đẩy Data Pixel
+//    ST7789_SendCommand(0x2C);
+//}
+
+void ILI9341_SendCommand(uint8_t cmd) {
+ 8000cb0:	b580      	push	{r7, lr}
+ 8000cb2:	b082      	sub	sp, #8
+ 8000cb4:	af00      	add	r7, sp, #0
+ 8000cb6:	4603      	mov	r3, r0
+ 8000cb8:	71fb      	strb	r3, [r7, #7]
+    ILI9341_DC_CMD();       // Kéo DC xuống mức 0
+ 8000cba:	4b08      	ldr	r3, [pc, #32]	@ (8000cdc <ILI9341_SendCommand+0x2c>)
+ 8000cbc:	2208      	movs	r2, #8
+ 8000cbe:	615a      	str	r2, [r3, #20]
+    ILI9341_CS_SELECT();    // Kéo CS xuống mức 0
+ 8000cc0:	4b06      	ldr	r3, [pc, #24]	@ (8000cdc <ILI9341_SendCommand+0x2c>)
+ 8000cc2:	2210      	movs	r2, #16
+ 8000cc4:	615a      	str	r2, [r3, #20]
+    SPI_SendByte(cmd);
+ 8000cc6:	79fb      	ldrb	r3, [r7, #7]
+ 8000cc8:	4618      	mov	r0, r3
+ 8000cca:	f7ff ffcb 	bl	8000c64 <SPI_SendByte>
+    ILI9341_CS_DESELECT();  // Trả CS lên mức 1
+ 8000cce:	4b03      	ldr	r3, [pc, #12]	@ (8000cdc <ILI9341_SendCommand+0x2c>)
+ 8000cd0:	2210      	movs	r2, #16
+ 8000cd2:	611a      	str	r2, [r3, #16]
+}
+ 8000cd4:	bf00      	nop
+ 8000cd6:	3708      	adds	r7, #8
+ 8000cd8:	46bd      	mov	sp, r7
+ 8000cda:	bd80      	pop	{r7, pc}
+ 8000cdc:	40010800 	.word	0x40010800
+
+08000ce0 <ILI9341_SendData>:
+
+void ILI9341_SendData(uint8_t data) {
+ 8000ce0:	b580      	push	{r7, lr}
+ 8000ce2:	b082      	sub	sp, #8
+ 8000ce4:	af00      	add	r7, sp, #0
+ 8000ce6:	4603      	mov	r3, r0
+ 8000ce8:	71fb      	strb	r3, [r7, #7]
+    ILI9341_DC_DATA();      // Kéo DC lên mức 1
+ 8000cea:	4b08      	ldr	r3, [pc, #32]	@ (8000d0c <ILI9341_SendData+0x2c>)
+ 8000cec:	2208      	movs	r2, #8
+ 8000cee:	611a      	str	r2, [r3, #16]
+    ILI9341_CS_SELECT();
+ 8000cf0:	4b06      	ldr	r3, [pc, #24]	@ (8000d0c <ILI9341_SendData+0x2c>)
+ 8000cf2:	2210      	movs	r2, #16
+ 8000cf4:	615a      	str	r2, [r3, #20]
+    SPI_SendByte(data);
+ 8000cf6:	79fb      	ldrb	r3, [r7, #7]
+ 8000cf8:	4618      	mov	r0, r3
+ 8000cfa:	f7ff ffb3 	bl	8000c64 <SPI_SendByte>
+    ILI9341_CS_DESELECT();
+ 8000cfe:	4b03      	ldr	r3, [pc, #12]	@ (8000d0c <ILI9341_SendData+0x2c>)
+ 8000d00:	2210      	movs	r2, #16
+ 8000d02:	611a      	str	r2, [r3, #16]
+}
+ 8000d04:	bf00      	nop
+ 8000d06:	3708      	adds	r7, #8
+ 8000d08:	46bd      	mov	sp, r7
+ 8000d0a:	bd80      	pop	{r7, pc}
+ 8000d0c:	40010800 	.word	0x40010800
+
+08000d10 <ILI9341_Init>:
+
+void ILI9341_Init(void) {
+ 8000d10:	b580      	push	{r7, lr}
+ 8000d12:	af00      	add	r7, sp, #0
+    // 1. Hard Reset phần cứng
+    ILI9341_CS_DESELECT();
+ 8000d14:	4b2a      	ldr	r3, [pc, #168]	@ (8000dc0 <ILI9341_Init+0xb0>)
+ 8000d16:	2210      	movs	r2, #16
+ 8000d18:	611a      	str	r2, [r3, #16]
+    ILI9341_RST_HIGH();
+ 8000d1a:	4b29      	ldr	r3, [pc, #164]	@ (8000dc0 <ILI9341_Init+0xb0>)
+ 8000d1c:	2204      	movs	r2, #4
+ 8000d1e:	611a      	str	r2, [r3, #16]
+    Delay_ms(10);
+ 8000d20:	200a      	movs	r0, #10
+ 8000d22:	f7ff ff89 	bl	8000c38 <Delay_ms>
+    ILI9341_RST_LOW();
+ 8000d26:	4b26      	ldr	r3, [pc, #152]	@ (8000dc0 <ILI9341_Init+0xb0>)
+ 8000d28:	2204      	movs	r2, #4
+ 8000d2a:	615a      	str	r2, [r3, #20]
+    Delay_ms(20);
+ 8000d2c:	2014      	movs	r0, #20
+ 8000d2e:	f7ff ff83 	bl	8000c38 <Delay_ms>
+    ILI9341_RST_HIGH();
+ 8000d32:	4b23      	ldr	r3, [pc, #140]	@ (8000dc0 <ILI9341_Init+0xb0>)
+ 8000d34:	2204      	movs	r2, #4
+ 8000d36:	611a      	str	r2, [r3, #16]
+    Delay_ms(120); // Chờ IC ổn định
+ 8000d38:	2078      	movs	r0, #120	@ 0x78
+ 8000d3a:	f7ff ff7d 	bl	8000c38 <Delay_ms>
+
+    // 2. Software Reset (Khuyên dùng trên ILI9341)
+    ILI9341_SendCommand(0x01);
+ 8000d3e:	2001      	movs	r0, #1
+ 8000d40:	f7ff ffb6 	bl	8000cb0 <ILI9341_SendCommand>
+    Delay_ms(100);
+ 8000d44:	2064      	movs	r0, #100	@ 0x64
+ 8000d46:	f7ff ff77 	bl	8000c38 <Delay_ms>
+
+    // 3. Chuỗi cấu hình Nguồn & VCOM (BẮT BUỘC cho Proteus)
+    ILI9341_SendCommand(0xC0); // Power Control 1
+ 8000d4a:	20c0      	movs	r0, #192	@ 0xc0
+ 8000d4c:	f7ff ffb0 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(0x23);    // VRH[5:0]
+ 8000d50:	2023      	movs	r0, #35	@ 0x23
+ 8000d52:	f7ff ffc5 	bl	8000ce0 <ILI9341_SendData>
+
+    ILI9341_SendCommand(0xC1); // Power Control 2
+ 8000d56:	20c1      	movs	r0, #193	@ 0xc1
+ 8000d58:	f7ff ffaa 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(0x10);    // SAP[2:0];BT[3:0]
+ 8000d5c:	2010      	movs	r0, #16
+ 8000d5e:	f7ff ffbf 	bl	8000ce0 <ILI9341_SendData>
+
+    ILI9341_SendCommand(0xC5); // VCOM Control 1
+ 8000d62:	20c5      	movs	r0, #197	@ 0xc5
+ 8000d64:	f7ff ffa4 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(0x3E);
+ 8000d68:	203e      	movs	r0, #62	@ 0x3e
+ 8000d6a:	f7ff ffb9 	bl	8000ce0 <ILI9341_SendData>
+    ILI9341_SendData(0x28);
+ 8000d6e:	2028      	movs	r0, #40	@ 0x28
+ 8000d70:	f7ff ffb6 	bl	8000ce0 <ILI9341_SendData>
+
+    ILI9341_SendCommand(0xC7); // VCOM Control 2
+ 8000d74:	20c7      	movs	r0, #199	@ 0xc7
+ 8000d76:	f7ff ff9b 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(0x86);
+ 8000d7a:	2086      	movs	r0, #134	@ 0x86
+ 8000d7c:	f7ff ffb0 	bl	8000ce0 <ILI9341_SendData>
+
+    // 4. Memory Access Control (MADCTL)
+    ILI9341_SendCommand(0x36);
+ 8000d80:	2036      	movs	r0, #54	@ 0x36
+ 8000d82:	f7ff ff95 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(0x48);    // 0x48: Định dạng BGR, quét dọc (Chuẩn của ILI9341 Proteus)
+ 8000d86:	2048      	movs	r0, #72	@ 0x48
+ 8000d88:	f7ff ffaa 	bl	8000ce0 <ILI9341_SendData>
+
+    // 5. Pixel Format (16-bit RGB565)
+    ILI9341_SendCommand(0x3A);
+ 8000d8c:	203a      	movs	r0, #58	@ 0x3a
+ 8000d8e:	f7ff ff8f 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(0x55);    // 0x55 thay vì 0x05 của ST7789
+ 8000d92:	2055      	movs	r0, #85	@ 0x55
+ 8000d94:	f7ff ffa4 	bl	8000ce0 <ILI9341_SendData>
+
+    // 6. Normal Display (Tắt Inversion)
+    ILI9341_SendCommand(0x20);
+ 8000d98:	2020      	movs	r0, #32
+ 8000d9a:	f7ff ff89 	bl	8000cb0 <ILI9341_SendCommand>
+
+    // 7. Thoát chế độ ngủ & Bật hiển thị
+    ILI9341_SendCommand(0x11); // Sleep Out
+ 8000d9e:	2011      	movs	r0, #17
+ 8000da0:	f7ff ff86 	bl	8000cb0 <ILI9341_SendCommand>
+    Delay_ms(120);
+ 8000da4:	2078      	movs	r0, #120	@ 0x78
+ 8000da6:	f7ff ff47 	bl	8000c38 <Delay_ms>
+
+    ILI9341_SendCommand(0x29); // Display ON
+ 8000daa:	2029      	movs	r0, #41	@ 0x29
+ 8000dac:	f7ff ff80 	bl	8000cb0 <ILI9341_SendCommand>
+    Delay_ms(20);
+ 8000db0:	2014      	movs	r0, #20
+ 8000db2:	f7ff ff41 	bl	8000c38 <Delay_ms>
+
+    // 8. Bật đèn nền
+    ILI9341_BLK_ON();
+ 8000db6:	4b03      	ldr	r3, [pc, #12]	@ (8000dc4 <ILI9341_Init+0xb4>)
+ 8000db8:	2201      	movs	r2, #1
+ 8000dba:	611a      	str	r2, [r3, #16]
+}
+ 8000dbc:	bf00      	nop
+ 8000dbe:	bd80      	pop	{r7, pc}
+ 8000dc0:	40010800 	.word	0x40010800
+ 8000dc4:	40010c00 	.word	0x40010c00
+
+08000dc8 <ILI9341_SetWindow>:
+
+void ILI9341_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+ 8000dc8:	b590      	push	{r4, r7, lr}
+ 8000dca:	b083      	sub	sp, #12
+ 8000dcc:	af00      	add	r7, sp, #0
+ 8000dce:	4604      	mov	r4, r0
+ 8000dd0:	4608      	mov	r0, r1
+ 8000dd2:	4611      	mov	r1, r2
+ 8000dd4:	461a      	mov	r2, r3
+ 8000dd6:	4623      	mov	r3, r4
+ 8000dd8:	80fb      	strh	r3, [r7, #6]
+ 8000dda:	4603      	mov	r3, r0
+ 8000ddc:	80bb      	strh	r3, [r7, #4]
+ 8000dde:	460b      	mov	r3, r1
+ 8000de0:	807b      	strh	r3, [r7, #2]
+ 8000de2:	4613      	mov	r3, r2
+ 8000de4:	803b      	strh	r3, [r7, #0]
+    // Cài đặt địa chỉ cột (Column Address Set)
+    ILI9341_SendCommand(0x2A);
+ 8000de6:	202a      	movs	r0, #42	@ 0x2a
+ 8000de8:	f7ff ff62 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(x0 >> 8);
+ 8000dec:	88fb      	ldrh	r3, [r7, #6]
+ 8000dee:	0a1b      	lsrs	r3, r3, #8
+ 8000df0:	b29b      	uxth	r3, r3
+ 8000df2:	b2db      	uxtb	r3, r3
+ 8000df4:	4618      	mov	r0, r3
+ 8000df6:	f7ff ff73 	bl	8000ce0 <ILI9341_SendData>
+    ILI9341_SendData(x0 & 0xFF);
+ 8000dfa:	88fb      	ldrh	r3, [r7, #6]
+ 8000dfc:	b2db      	uxtb	r3, r3
+ 8000dfe:	4618      	mov	r0, r3
+ 8000e00:	f7ff ff6e 	bl	8000ce0 <ILI9341_SendData>
+    ILI9341_SendData(x1 >> 8);
+ 8000e04:	887b      	ldrh	r3, [r7, #2]
+ 8000e06:	0a1b      	lsrs	r3, r3, #8
+ 8000e08:	b29b      	uxth	r3, r3
+ 8000e0a:	b2db      	uxtb	r3, r3
+ 8000e0c:	4618      	mov	r0, r3
+ 8000e0e:	f7ff ff67 	bl	8000ce0 <ILI9341_SendData>
+    ILI9341_SendData(x1 & 0xFF);
+ 8000e12:	887b      	ldrh	r3, [r7, #2]
+ 8000e14:	b2db      	uxtb	r3, r3
+ 8000e16:	4618      	mov	r0, r3
+ 8000e18:	f7ff ff62 	bl	8000ce0 <ILI9341_SendData>
+
+    // Cài đặt địa chỉ hàng (Row Address Set)
+    ILI9341_SendCommand(0x2B);
+ 8000e1c:	202b      	movs	r0, #43	@ 0x2b
+ 8000e1e:	f7ff ff47 	bl	8000cb0 <ILI9341_SendCommand>
+    ILI9341_SendData(y0 >> 8);
+ 8000e22:	88bb      	ldrh	r3, [r7, #4]
+ 8000e24:	0a1b      	lsrs	r3, r3, #8
+ 8000e26:	b29b      	uxth	r3, r3
+ 8000e28:	b2db      	uxtb	r3, r3
+ 8000e2a:	4618      	mov	r0, r3
+ 8000e2c:	f7ff ff58 	bl	8000ce0 <ILI9341_SendData>
+    ILI9341_SendData(y0 & 0xFF);
+ 8000e30:	88bb      	ldrh	r3, [r7, #4]
+ 8000e32:	b2db      	uxtb	r3, r3
+ 8000e34:	4618      	mov	r0, r3
+ 8000e36:	f7ff ff53 	bl	8000ce0 <ILI9341_SendData>
+    ILI9341_SendData(y1 >> 8);
+ 8000e3a:	883b      	ldrh	r3, [r7, #0]
+ 8000e3c:	0a1b      	lsrs	r3, r3, #8
+ 8000e3e:	b29b      	uxth	r3, r3
+ 8000e40:	b2db      	uxtb	r3, r3
+ 8000e42:	4618      	mov	r0, r3
+ 8000e44:	f7ff ff4c 	bl	8000ce0 <ILI9341_SendData>
+    ILI9341_SendData(y1 & 0xFF);
+ 8000e48:	883b      	ldrh	r3, [r7, #0]
+ 8000e4a:	b2db      	uxtb	r3, r3
+ 8000e4c:	4618      	mov	r0, r3
+ 8000e4e:	f7ff ff47 	bl	8000ce0 <ILI9341_SendData>
+
+    // Lệnh chuẩn bị ghi RAM (Memory Write)
+    ILI9341_SendCommand(0x2C);
+ 8000e52:	202c      	movs	r0, #44	@ 0x2c
+ 8000e54:	f7ff ff2c 	bl	8000cb0 <ILI9341_SendCommand>
+}
+ 8000e58:	bf00      	nop
+ 8000e5a:	370c      	adds	r7, #12
+ 8000e5c:	46bd      	mov	sp, r7
+ 8000e5e:	bd90      	pop	{r4, r7, pc}
+
+08000e60 <ILI9341_FillColor>:
+void ILI9341_FillColor(uint16_t color) {
+ 8000e60:	b580      	push	{r7, lr}
+ 8000e62:	f5ad 5d96 	sub.w	sp, sp, #4800	@ 0x12c0
+ 8000e66:	b084      	sub	sp, #16
+ 8000e68:	af00      	add	r7, sp, #0
+ 8000e6a:	4602      	mov	r2, r0
+ 8000e6c:	f507 7334 	add.w	r3, r7, #720	@ 0x2d0
+ 8000e70:	f2a3 23ca 	subw	r3, r3, #714	@ 0x2ca
+ 8000e74:	801a      	strh	r2, [r3, #0]
+    uint8_t color_high = color >> 8;
+ 8000e76:	f507 7334 	add.w	r3, r7, #720	@ 0x2d0
+ 8000e7a:	f2a3 23ca 	subw	r3, r3, #714	@ 0x2ca
+ 8000e7e:	881b      	ldrh	r3, [r3, #0]
+ 8000e80:	0a1b      	lsrs	r3, r3, #8
+ 8000e82:	b29b      	uxth	r3, r3
+ 8000e84:	f507 5296 	add.w	r2, r7, #4800	@ 0x12c0
+ 8000e88:	f102 020b 	add.w	r2, r2, #11
+ 8000e8c:	7013      	strb	r3, [r2, #0]
+    uint8_t color_low = color & 0xFF;
+ 8000e8e:	f507 7334 	add.w	r3, r7, #720	@ 0x2d0
+ 8000e92:	f2a3 23ca 	subw	r3, r3, #714	@ 0x2ca
+ 8000e96:	881b      	ldrh	r3, [r3, #0]
+ 8000e98:	f507 5296 	add.w	r2, r7, #4800	@ 0x12c0
+ 8000e9c:	f102 020a 	add.w	r2, r2, #10
+ 8000ea0:	7013      	strb	r3, [r2, #0]
+
+    // Tăng Buffer lên 10 dòng ngang (240 pixels * 2 bytes * 10 lines = 4800 bytes)
+    // Tốn ~4.6KB RAM (hoàn toàn an toàn trong ngưỡng 20KB của MCU)
+    uint8_t dma_buffer[4800];
+    for(uint16_t i = 0; i < 4800; i += 2) {
+ 8000ea2:	2300      	movs	r3, #0
+ 8000ea4:	f507 5296 	add.w	r2, r7, #4800	@ 0x12c0
+ 8000ea8:	f102 020e 	add.w	r2, r2, #14
+ 8000eac:	8013      	strh	r3, [r2, #0]
+ 8000eae:	e029      	b.n	8000f04 <ILI9341_FillColor+0xa4>
+        dma_buffer[i] = color_high;
+ 8000eb0:	f507 5396 	add.w	r3, r7, #4800	@ 0x12c0
+ 8000eb4:	f103 030e 	add.w	r3, r3, #14
+ 8000eb8:	881b      	ldrh	r3, [r3, #0]
+ 8000eba:	f507 7234 	add.w	r2, r7, #720	@ 0x2d0
+ 8000ebe:	f5a2 7232 	sub.w	r2, r2, #712	@ 0x2c8
+ 8000ec2:	f507 5196 	add.w	r1, r7, #4800	@ 0x12c0
+ 8000ec6:	f101 010b 	add.w	r1, r1, #11
+ 8000eca:	7809      	ldrb	r1, [r1, #0]
+ 8000ecc:	54d1      	strb	r1, [r2, r3]
+        dma_buffer[i+1] = color_low;
+ 8000ece:	f507 5396 	add.w	r3, r7, #4800	@ 0x12c0
+ 8000ed2:	f103 030e 	add.w	r3, r3, #14
+ 8000ed6:	881b      	ldrh	r3, [r3, #0]
+ 8000ed8:	3301      	adds	r3, #1
+ 8000eda:	f507 7234 	add.w	r2, r7, #720	@ 0x2d0
+ 8000ede:	f5a2 7232 	sub.w	r2, r2, #712	@ 0x2c8
+ 8000ee2:	f507 5196 	add.w	r1, r7, #4800	@ 0x12c0
+ 8000ee6:	f101 010a 	add.w	r1, r1, #10
+ 8000eea:	7809      	ldrb	r1, [r1, #0]
+ 8000eec:	54d1      	strb	r1, [r2, r3]
+    for(uint16_t i = 0; i < 4800; i += 2) {
+ 8000eee:	f507 5396 	add.w	r3, r7, #4800	@ 0x12c0
+ 8000ef2:	f103 030e 	add.w	r3, r3, #14
+ 8000ef6:	881b      	ldrh	r3, [r3, #0]
+ 8000ef8:	3302      	adds	r3, #2
+ 8000efa:	f507 5296 	add.w	r2, r7, #4800	@ 0x12c0
+ 8000efe:	f102 020e 	add.w	r2, r2, #14
+ 8000f02:	8013      	strh	r3, [r2, #0]
+ 8000f04:	f507 5396 	add.w	r3, r7, #4800	@ 0x12c0
+ 8000f08:	f103 030e 	add.w	r3, r3, #14
+ 8000f0c:	881b      	ldrh	r3, [r3, #0]
+ 8000f0e:	f5b3 5f96 	cmp.w	r3, #4800	@ 0x12c0
+ 8000f12:	d3cd      	bcc.n	8000eb0 <ILI9341_FillColor+0x50>
+    }
+
+    ILI9341_SetWindow(0, 0, 239, 319);
+ 8000f14:	f240 133f 	movw	r3, #319	@ 0x13f
+ 8000f18:	22ef      	movs	r2, #239	@ 0xef
+ 8000f1a:	2100      	movs	r1, #0
+ 8000f1c:	2000      	movs	r0, #0
+ 8000f1e:	f7ff ff53 	bl	8000dc8 <ILI9341_SetWindow>
+
+    ILI9341_DC_DATA();
+ 8000f22:	4b19      	ldr	r3, [pc, #100]	@ (8000f88 <ILI9341_FillColor+0x128>)
+ 8000f24:	2208      	movs	r2, #8
+ 8000f26:	611a      	str	r2, [r3, #16]
+    ILI9341_CS_SELECT();
+ 8000f28:	4b17      	ldr	r3, [pc, #92]	@ (8000f88 <ILI9341_FillColor+0x128>)
+ 8000f2a:	2210      	movs	r2, #16
+ 8000f2c:	615a      	str	r2, [r3, #20]
+
+    // 320 dòng / 10 dòng mỗi chunk = 32 lần đẩy DMA (giảm từ 320 xuống 32 lần)
+    for(uint16_t chunk = 0; chunk < 32; chunk++) {
+ 8000f2e:	2300      	movs	r3, #0
+ 8000f30:	f507 5296 	add.w	r2, r7, #4800	@ 0x12c0
+ 8000f34:	f102 020c 	add.w	r2, r2, #12
+ 8000f38:	8013      	strh	r3, [r2, #0]
+ 8000f3a:	e014      	b.n	8000f66 <ILI9341_FillColor+0x106>
+        spi1_dma_transmit(dma_buffer, 4800);
+ 8000f3c:	f107 0310 	add.w	r3, r7, #16
+ 8000f40:	3b08      	subs	r3, #8
+ 8000f42:	f44f 5196 	mov.w	r1, #4800	@ 0x12c0
+ 8000f46:	4618      	mov	r0, r3
+ 8000f48:	f7ff fe2a 	bl	8000ba0 <spi1_dma_transmit>
+        spi1_dma_wait_complete();
+ 8000f4c:	f7ff fe5a 	bl	8000c04 <spi1_dma_wait_complete>
+    for(uint16_t chunk = 0; chunk < 32; chunk++) {
+ 8000f50:	f507 5396 	add.w	r3, r7, #4800	@ 0x12c0
+ 8000f54:	f103 030c 	add.w	r3, r3, #12
+ 8000f58:	881b      	ldrh	r3, [r3, #0]
+ 8000f5a:	3301      	adds	r3, #1
+ 8000f5c:	f507 5296 	add.w	r2, r7, #4800	@ 0x12c0
+ 8000f60:	f102 020c 	add.w	r2, r2, #12
+ 8000f64:	8013      	strh	r3, [r2, #0]
+ 8000f66:	f507 5396 	add.w	r3, r7, #4800	@ 0x12c0
+ 8000f6a:	f103 030c 	add.w	r3, r3, #12
+ 8000f6e:	881b      	ldrh	r3, [r3, #0]
+ 8000f70:	2b1f      	cmp	r3, #31
+ 8000f72:	d9e3      	bls.n	8000f3c <ILI9341_FillColor+0xdc>
+    }
+
+    ILI9341_CS_DESELECT();
+ 8000f74:	4b04      	ldr	r3, [pc, #16]	@ (8000f88 <ILI9341_FillColor+0x128>)
+ 8000f76:	2210      	movs	r2, #16
+ 8000f78:	611a      	str	r2, [r3, #16]
+}
+ 8000f7a:	bf00      	nop
+ 8000f7c:	f507 5796 	add.w	r7, r7, #4800	@ 0x12c0
+ 8000f80:	3710      	adds	r7, #16
+ 8000f82:	46bd      	mov	sp, r7
+ 8000f84:	bd80      	pop	{r7, pc}
+ 8000f86:	bf00      	nop
+ 8000f88:	40010800 	.word	0x40010800
+
+08000f8c <__NVIC_SetPriority>:
+{
+ 8000f8c:	b480      	push	{r7}
+ 8000f8e:	b083      	sub	sp, #12
+ 8000f90:	af00      	add	r7, sp, #0
+ 8000f92:	4603      	mov	r3, r0
+ 8000f94:	6039      	str	r1, [r7, #0]
+ 8000f96:	71fb      	strb	r3, [r7, #7]
+  if ((int32_t)(IRQn) >= 0)
+ 8000f98:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 8000f9c:	2b00      	cmp	r3, #0
+ 8000f9e:	db0a      	blt.n	8000fb6 <__NVIC_SetPriority+0x2a>
+    NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
+ 8000fa0:	683b      	ldr	r3, [r7, #0]
+ 8000fa2:	b2da      	uxtb	r2, r3
+ 8000fa4:	490c      	ldr	r1, [pc, #48]	@ (8000fd8 <__NVIC_SetPriority+0x4c>)
+ 8000fa6:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 8000faa:	0112      	lsls	r2, r2, #4
+ 8000fac:	b2d2      	uxtb	r2, r2
+ 8000fae:	440b      	add	r3, r1
+ 8000fb0:	f883 2300 	strb.w	r2, [r3, #768]	@ 0x300
+}
+ 8000fb4:	e00a      	b.n	8000fcc <__NVIC_SetPriority+0x40>
+    SCB->SHP[(((uint32_t)IRQn) & 0xFUL)-4UL] = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
+ 8000fb6:	683b      	ldr	r3, [r7, #0]
+ 8000fb8:	b2da      	uxtb	r2, r3
+ 8000fba:	4908      	ldr	r1, [pc, #32]	@ (8000fdc <__NVIC_SetPriority+0x50>)
+ 8000fbc:	79fb      	ldrb	r3, [r7, #7]
+ 8000fbe:	f003 030f 	and.w	r3, r3, #15
+ 8000fc2:	3b04      	subs	r3, #4
+ 8000fc4:	0112      	lsls	r2, r2, #4
+ 8000fc6:	b2d2      	uxtb	r2, r2
+ 8000fc8:	440b      	add	r3, r1
+ 8000fca:	761a      	strb	r2, [r3, #24]
+}
+ 8000fcc:	bf00      	nop
+ 8000fce:	370c      	adds	r7, #12
+ 8000fd0:	46bd      	mov	sp, r7
+ 8000fd2:	bc80      	pop	{r7}
+ 8000fd4:	4770      	bx	lr
+ 8000fd6:	bf00      	nop
+ 8000fd8:	e000e100 	.word	0xe000e100
+ 8000fdc:	e000ed00 	.word	0xe000ed00
+
+08000fe0 <SysTick_Config>:
+  \note    When the variable <b>__Vendor_SysTickConfig</b> is set to 1, then the
+           function <b>SysTick_Config</b> is not included. In this case, the file <b><i>device</i>.h</b>
+           must contain a vendor-specific implementation of this function.
+ */
+__STATIC_INLINE uint32_t SysTick_Config(uint32_t ticks)
+{
+ 8000fe0:	b580      	push	{r7, lr}
+ 8000fe2:	b082      	sub	sp, #8
+ 8000fe4:	af00      	add	r7, sp, #0
+ 8000fe6:	6078      	str	r0, [r7, #4]
+  if ((ticks - 1UL) > SysTick_LOAD_RELOAD_Msk)
+ 8000fe8:	687b      	ldr	r3, [r7, #4]
+ 8000fea:	3b01      	subs	r3, #1
+ 8000fec:	f1b3 7f80 	cmp.w	r3, #16777216	@ 0x1000000
+ 8000ff0:	d301      	bcc.n	8000ff6 <SysTick_Config+0x16>
+  {
+    return (1UL);                                                   /* Reload value impossible */
+ 8000ff2:	2301      	movs	r3, #1
+ 8000ff4:	e00f      	b.n	8001016 <SysTick_Config+0x36>
+  }
+
+  SysTick->LOAD  = (uint32_t)(ticks - 1UL);                         /* set reload register */
+ 8000ff6:	4a0a      	ldr	r2, [pc, #40]	@ (8001020 <SysTick_Config+0x40>)
+ 8000ff8:	687b      	ldr	r3, [r7, #4]
+ 8000ffa:	3b01      	subs	r3, #1
+ 8000ffc:	6053      	str	r3, [r2, #4]
+  NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL); /* set Priority for Systick Interrupt */
+ 8000ffe:	210f      	movs	r1, #15
+ 8001000:	f04f 30ff 	mov.w	r0, #4294967295
+ 8001004:	f7ff ffc2 	bl	8000f8c <__NVIC_SetPriority>
+  SysTick->VAL   = 0UL;                                             /* Load the SysTick Counter Value */
+ 8001008:	4b05      	ldr	r3, [pc, #20]	@ (8001020 <SysTick_Config+0x40>)
+ 800100a:	2200      	movs	r2, #0
+ 800100c:	609a      	str	r2, [r3, #8]
+  SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
+ 800100e:	4b04      	ldr	r3, [pc, #16]	@ (8001020 <SysTick_Config+0x40>)
+ 8001010:	2207      	movs	r2, #7
+ 8001012:	601a      	str	r2, [r3, #0]
+                   SysTick_CTRL_TICKINT_Msk   |
+                   SysTick_CTRL_ENABLE_Msk;                         /* Enable SysTick IRQ and SysTick Timer */
+  return (0UL);                                                     /* Function successful */
+ 8001014:	2300      	movs	r3, #0
+}
+ 8001016:	4618      	mov	r0, r3
+ 8001018:	3708      	adds	r7, #8
+ 800101a:	46bd      	mov	sp, r7
+ 800101c:	bd80      	pop	{r7, pc}
+ 800101e:	bf00      	nop
+ 8001020:	e000e010 	.word	0xe000e010
+
+08001024 <SysTick_Init>:
+
+
+static volatile uint32_t system_tick_ms = 0;
+
+
+void SysTick_Init(void) {
+ 8001024:	b580      	push	{r7, lr}
+ 8001026:	af00      	add	r7, sp, #0
+    // Cấu hình SysTick ngắt mỗi 1ms
+    SysTick_Config(72000000U / 1000);
+ 8001028:	4802      	ldr	r0, [pc, #8]	@ (8001034 <SysTick_Init+0x10>)
+ 800102a:	f7ff ffd9 	bl	8000fe0 <SysTick_Config>
+}
+ 800102e:	bf00      	nop
+ 8001030:	bd80      	pop	{r7, pc}
+ 8001032:	bf00      	nop
+ 8001034:	00011940 	.word	0x00011940
+
+08001038 <SysTick_Handler>:
+
+
+void SysTick_Handler(void) {
+ 8001038:	b480      	push	{r7}
+ 800103a:	af00      	add	r7, sp, #0
+    system_tick_ms++;
+ 800103c:	4b04      	ldr	r3, [pc, #16]	@ (8001050 <SysTick_Handler+0x18>)
+ 800103e:	681b      	ldr	r3, [r3, #0]
+ 8001040:	3301      	adds	r3, #1
+ 8001042:	4a03      	ldr	r2, [pc, #12]	@ (8001050 <SysTick_Handler+0x18>)
+ 8001044:	6013      	str	r3, [r2, #0]
+}
+ 8001046:	bf00      	nop
+ 8001048:	46bd      	mov	sp, r7
+ 800104a:	bc80      	pop	{r7}
+ 800104c:	4770      	bx	lr
+ 800104e:	bf00      	nop
+ 8001050:	20000030 	.word	0x20000030
+
+08001054 <Get_System_Tick>:
+
+
+uint32_t Get_System_Tick(void) {
+ 8001054:	b480      	push	{r7}
+ 8001056:	af00      	add	r7, sp, #0
+    return system_tick_ms;
+ 8001058:	4b02      	ldr	r3, [pc, #8]	@ (8001064 <Get_System_Tick+0x10>)
+ 800105a:	681b      	ldr	r3, [r3, #0]
+}
+ 800105c:	4618      	mov	r0, r3
+ 800105e:	46bd      	mov	sp, r7
+ 8001060:	bc80      	pop	{r7}
+ 8001062:	4770      	bx	lr
+ 8001064:	20000030 	.word	0x20000030
+
+08001068 <__NVIC_EnableIRQ>:
+{
+ 8001068:	b480      	push	{r7}
+ 800106a:	b083      	sub	sp, #12
+ 800106c:	af00      	add	r7, sp, #0
+ 800106e:	4603      	mov	r3, r0
+ 8001070:	71fb      	strb	r3, [r7, #7]
+  if ((int32_t)(IRQn) >= 0)
+ 8001072:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 8001076:	2b00      	cmp	r3, #0
+ 8001078:	db0b      	blt.n	8001092 <__NVIC_EnableIRQ+0x2a>
+    NVIC->ISER[(((uint32_t)IRQn) >> 5UL)] = (uint32_t)(1UL << (((uint32_t)IRQn) & 0x1FUL));
+ 800107a:	79fb      	ldrb	r3, [r7, #7]
+ 800107c:	f003 021f 	and.w	r2, r3, #31
+ 8001080:	4906      	ldr	r1, [pc, #24]	@ (800109c <__NVIC_EnableIRQ+0x34>)
+ 8001082:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 8001086:	095b      	lsrs	r3, r3, #5
+ 8001088:	2001      	movs	r0, #1
+ 800108a:	fa00 f202 	lsl.w	r2, r0, r2
+ 800108e:	f841 2023 	str.w	r2, [r1, r3, lsl #2]
+}
+ 8001092:	bf00      	nop
+ 8001094:	370c      	adds	r7, #12
+ 8001096:	46bd      	mov	sp, r7
+ 8001098:	bc80      	pop	{r7}
+ 800109a:	4770      	bx	lr
+ 800109c:	e000e100 	.word	0xe000e100
+
+080010a0 <__NVIC_SetPriority>:
+{
+ 80010a0:	b480      	push	{r7}
+ 80010a2:	b083      	sub	sp, #12
+ 80010a4:	af00      	add	r7, sp, #0
+ 80010a6:	4603      	mov	r3, r0
+ 80010a8:	6039      	str	r1, [r7, #0]
+ 80010aa:	71fb      	strb	r3, [r7, #7]
+  if ((int32_t)(IRQn) >= 0)
+ 80010ac:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 80010b0:	2b00      	cmp	r3, #0
+ 80010b2:	db0a      	blt.n	80010ca <__NVIC_SetPriority+0x2a>
+    NVIC->IP[((uint32_t)IRQn)]               = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
+ 80010b4:	683b      	ldr	r3, [r7, #0]
+ 80010b6:	b2da      	uxtb	r2, r3
+ 80010b8:	490c      	ldr	r1, [pc, #48]	@ (80010ec <__NVIC_SetPriority+0x4c>)
+ 80010ba:	f997 3007 	ldrsb.w	r3, [r7, #7]
+ 80010be:	0112      	lsls	r2, r2, #4
+ 80010c0:	b2d2      	uxtb	r2, r2
+ 80010c2:	440b      	add	r3, r1
+ 80010c4:	f883 2300 	strb.w	r2, [r3, #768]	@ 0x300
+}
+ 80010c8:	e00a      	b.n	80010e0 <__NVIC_SetPriority+0x40>
+    SCB->SHP[(((uint32_t)IRQn) & 0xFUL)-4UL] = (uint8_t)((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL);
+ 80010ca:	683b      	ldr	r3, [r7, #0]
+ 80010cc:	b2da      	uxtb	r2, r3
+ 80010ce:	4908      	ldr	r1, [pc, #32]	@ (80010f0 <__NVIC_SetPriority+0x50>)
+ 80010d0:	79fb      	ldrb	r3, [r7, #7]
+ 80010d2:	f003 030f 	and.w	r3, r3, #15
+ 80010d6:	3b04      	subs	r3, #4
+ 80010d8:	0112      	lsls	r2, r2, #4
+ 80010da:	b2d2      	uxtb	r2, r2
+ 80010dc:	440b      	add	r3, r1
+ 80010de:	761a      	strb	r2, [r3, #24]
+}
+ 80010e0:	bf00      	nop
+ 80010e2:	370c      	adds	r7, #12
+ 80010e4:	46bd      	mov	sp, r7
+ 80010e6:	bc80      	pop	{r7}
+ 80010e8:	4770      	bx	lr
+ 80010ea:	bf00      	nop
+ 80010ec:	e000e100 	.word	0xe000e100
+ 80010f0:	e000ed00 	.word	0xe000ed00
+
+080010f4 <UART1_DMA_Init>:
+
+volatile uint8_t rx_ring_buffer[RX_RING_SIZE];
+volatile uint16_t head_ptr = 0;
+uint16_t tail_ptr = 0;
+
+void UART1_DMA_Init(void) {
+ 80010f4:	b580      	push	{r7, lr}
+ 80010f6:	af00      	add	r7, sp, #0
+    RCC->APB2ENR |= GPIOAEN | USART1EN | AFIOEN;
+ 80010f8:	4b31      	ldr	r3, [pc, #196]	@ (80011c0 <UART1_DMA_Init+0xcc>)
+ 80010fa:	699b      	ldr	r3, [r3, #24]
+ 80010fc:	4a30      	ldr	r2, [pc, #192]	@ (80011c0 <UART1_DMA_Init+0xcc>)
+ 80010fe:	f443 4380 	orr.w	r3, r3, #16384	@ 0x4000
+ 8001102:	f043 0305 	orr.w	r3, r3, #5
+ 8001106:	6193      	str	r3, [r2, #24]
+    RCC->AHBENR  |= DMA1EN;
+ 8001108:	4b2d      	ldr	r3, [pc, #180]	@ (80011c0 <UART1_DMA_Init+0xcc>)
+ 800110a:	695b      	ldr	r3, [r3, #20]
+ 800110c:	4a2c      	ldr	r2, [pc, #176]	@ (80011c0 <UART1_DMA_Init+0xcc>)
+ 800110e:	f043 0301 	orr.w	r3, r3, #1
+ 8001112:	6153      	str	r3, [r2, #20]
+
+    GPIOA->CRH &= ~((0xFU << (1 * 4)) | (0xFU << (2 * 4)));
+ 8001114:	4b2b      	ldr	r3, [pc, #172]	@ (80011c4 <UART1_DMA_Init+0xd0>)
+ 8001116:	685b      	ldr	r3, [r3, #4]
+ 8001118:	4a2a      	ldr	r2, [pc, #168]	@ (80011c4 <UART1_DMA_Init+0xd0>)
+ 800111a:	f423 637f 	bic.w	r3, r3, #4080	@ 0xff0
+ 800111e:	6053      	str	r3, [r2, #4]
+    GPIOA->CRH |=  (0xBU << (1 * 4));
+ 8001120:	4b28      	ldr	r3, [pc, #160]	@ (80011c4 <UART1_DMA_Init+0xd0>)
+ 8001122:	685b      	ldr	r3, [r3, #4]
+ 8001124:	4a27      	ldr	r2, [pc, #156]	@ (80011c4 <UART1_DMA_Init+0xd0>)
+ 8001126:	f043 03b0 	orr.w	r3, r3, #176	@ 0xb0
+ 800112a:	6053      	str	r3, [r2, #4]
+    GPIOA->CRH |=  (0x4U << (2 * 4));
+ 800112c:	4b25      	ldr	r3, [pc, #148]	@ (80011c4 <UART1_DMA_Init+0xd0>)
+ 800112e:	685b      	ldr	r3, [r3, #4]
+ 8001130:	4a24      	ldr	r2, [pc, #144]	@ (80011c4 <UART1_DMA_Init+0xd0>)
+ 8001132:	f443 6380 	orr.w	r3, r3, #1024	@ 0x400
+ 8001136:	6053      	str	r3, [r2, #4]
+
+    USART1->BRR = 0x271;
+ 8001138:	4b23      	ldr	r3, [pc, #140]	@ (80011c8 <UART1_DMA_Init+0xd4>)
+ 800113a:	f240 2271 	movw	r2, #625	@ 0x271
+ 800113e:	609a      	str	r2, [r3, #8]
+
+    // --- SỬA LỖI 1: Trỏ đúng vào Ring Buffer ---
+    DMA1_Channel5->CCR &= ~DMA_CCR5_EN;
+ 8001140:	4b22      	ldr	r3, [pc, #136]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 8001142:	681b      	ldr	r3, [r3, #0]
+ 8001144:	4a21      	ldr	r2, [pc, #132]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 8001146:	f023 0301 	bic.w	r3, r3, #1
+ 800114a:	6013      	str	r3, [r2, #0]
+    DMA1->IFCR = DMA_IFCR_CGIF4 | DMA_IFCR_CGIF5;
+ 800114c:	4b20      	ldr	r3, [pc, #128]	@ (80011d0 <UART1_DMA_Init+0xdc>)
+ 800114e:	f44f 3288 	mov.w	r2, #69632	@ 0x11000
+ 8001152:	605a      	str	r2, [r3, #4]
+    DMA1_Channel5->CPAR = (uint32_t)&USART1->DR;
+ 8001154:	4b1d      	ldr	r3, [pc, #116]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 8001156:	4a1f      	ldr	r2, [pc, #124]	@ (80011d4 <UART1_DMA_Init+0xe0>)
+ 8001158:	609a      	str	r2, [r3, #8]
+    DMA1_Channel5->CMAR = (uint32_t)rx_ring_buffer; // Trỏ vào mảng vòng
+ 800115a:	4b1c      	ldr	r3, [pc, #112]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 800115c:	4a1e      	ldr	r2, [pc, #120]	@ (80011d8 <UART1_DMA_Init+0xe4>)
+ 800115e:	60da      	str	r2, [r3, #12]
+    DMA1_Channel5->CNDTR = RX_RING_SIZE;            // Kích thước mảng vòng
+ 8001160:	4b1a      	ldr	r3, [pc, #104]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 8001162:	f44f 7280 	mov.w	r2, #256	@ 0x100
+ 8001166:	605a      	str	r2, [r3, #4]
+    DMA1_Channel5->CCR = DMA_CCR5_MINC | DMA_CCR5_CIRC;
+ 8001168:	4b18      	ldr	r3, [pc, #96]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 800116a:	22a0      	movs	r2, #160	@ 0xa0
+ 800116c:	601a      	str	r2, [r3, #0]
+    DMA1_Channel5->CCR |= DMA_CCR5_EN;
+ 800116e:	4b17      	ldr	r3, [pc, #92]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 8001170:	681b      	ldr	r3, [r3, #0]
+ 8001172:	4a16      	ldr	r2, [pc, #88]	@ (80011cc <UART1_DMA_Init+0xd8>)
+ 8001174:	f043 0301 	orr.w	r3, r3, #1
+ 8001178:	6013      	str	r3, [r2, #0]
+
+    DMA1_Channel4->CPAR = (uint32_t)&USART1->DR;
+ 800117a:	4b18      	ldr	r3, [pc, #96]	@ (80011dc <UART1_DMA_Init+0xe8>)
+ 800117c:	4a15      	ldr	r2, [pc, #84]	@ (80011d4 <UART1_DMA_Init+0xe0>)
+ 800117e:	609a      	str	r2, [r3, #8]
+    DMA1_Channel4->CCR = DMA_CCR4_MINC | DMA_CCR4_DIR;
+ 8001180:	4b16      	ldr	r3, [pc, #88]	@ (80011dc <UART1_DMA_Init+0xe8>)
+ 8001182:	2290      	movs	r2, #144	@ 0x90
+ 8001184:	601a      	str	r2, [r3, #0]
+
+    USART1->CR3 |= USART_CR3_DMAR | USART_CR3_DMAT;
+ 8001186:	4b10      	ldr	r3, [pc, #64]	@ (80011c8 <UART1_DMA_Init+0xd4>)
+ 8001188:	695b      	ldr	r3, [r3, #20]
+ 800118a:	4a0f      	ldr	r2, [pc, #60]	@ (80011c8 <UART1_DMA_Init+0xd4>)
+ 800118c:	f043 03c0 	orr.w	r3, r3, #192	@ 0xc0
+ 8001190:	6153      	str	r3, [r2, #20]
+    USART1->CR1 |= USART_CR1_IDLEIE;
+ 8001192:	4b0d      	ldr	r3, [pc, #52]	@ (80011c8 <UART1_DMA_Init+0xd4>)
+ 8001194:	68db      	ldr	r3, [r3, #12]
+ 8001196:	4a0c      	ldr	r2, [pc, #48]	@ (80011c8 <UART1_DMA_Init+0xd4>)
+ 8001198:	f043 0310 	orr.w	r3, r3, #16
+ 800119c:	60d3      	str	r3, [r2, #12]
+    USART1->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+ 800119e:	4b0a      	ldr	r3, [pc, #40]	@ (80011c8 <UART1_DMA_Init+0xd4>)
+ 80011a0:	68db      	ldr	r3, [r3, #12]
+ 80011a2:	4a09      	ldr	r2, [pc, #36]	@ (80011c8 <UART1_DMA_Init+0xd4>)
+ 80011a4:	f443 5300 	orr.w	r3, r3, #8192	@ 0x2000
+ 80011a8:	f043 030c 	orr.w	r3, r3, #12
+ 80011ac:	60d3      	str	r3, [r2, #12]
+
+    NVIC_SetPriority(USART1_IRQn, 1);
+ 80011ae:	2101      	movs	r1, #1
+ 80011b0:	2025      	movs	r0, #37	@ 0x25
+ 80011b2:	f7ff ff75 	bl	80010a0 <__NVIC_SetPriority>
+    NVIC_EnableIRQ(USART1_IRQn);
+ 80011b6:	2025      	movs	r0, #37	@ 0x25
+ 80011b8:	f7ff ff56 	bl	8001068 <__NVIC_EnableIRQ>
+}
+ 80011bc:	bf00      	nop
+ 80011be:	bd80      	pop	{r7, pc}
+ 80011c0:	40021000 	.word	0x40021000
+ 80011c4:	40010800 	.word	0x40010800
+ 80011c8:	40013800 	.word	0x40013800
+ 80011cc:	40020058 	.word	0x40020058
+ 80011d0:	40020000 	.word	0x40020000
+ 80011d4:	40013804 	.word	0x40013804
+ 80011d8:	20000034 	.word	0x20000034
+ 80011dc:	40020044 	.word	0x40020044
+
+080011e0 <UART1_DMA_Transmit>:
+
+void UART1_DMA_Transmit(uint8_t *data, uint16_t len) {
+ 80011e0:	b480      	push	{r7}
+ 80011e2:	b083      	sub	sp, #12
+ 80011e4:	af00      	add	r7, sp, #0
+ 80011e6:	6078      	str	r0, [r7, #4]
+ 80011e8:	460b      	mov	r3, r1
+ 80011ea:	807b      	strh	r3, [r7, #2]
+	if (DMA1_Channel4->CCR & DMA_CCR4_EN) {
+ 80011ec:	4b13      	ldr	r3, [pc, #76]	@ (800123c <UART1_DMA_Transmit+0x5c>)
+ 80011ee:	681b      	ldr	r3, [r3, #0]
+ 80011f0:	f003 0301 	and.w	r3, r3, #1
+ 80011f4:	2b00      	cmp	r3, #0
+ 80011f6:	d006      	beq.n	8001206 <UART1_DMA_Transmit+0x26>
+	        while (!(DMA1->ISR & DMA_ISR_TCIF4)) {}
+ 80011f8:	bf00      	nop
+ 80011fa:	4b11      	ldr	r3, [pc, #68]	@ (8001240 <UART1_DMA_Transmit+0x60>)
+ 80011fc:	681b      	ldr	r3, [r3, #0]
+ 80011fe:	f403 5300 	and.w	r3, r3, #8192	@ 0x2000
+ 8001202:	2b00      	cmp	r3, #0
+ 8001204:	d0f9      	beq.n	80011fa <UART1_DMA_Transmit+0x1a>
+	}
+    DMA1_Channel4->CCR &= ~DMA_CCR4_EN;
+ 8001206:	4b0d      	ldr	r3, [pc, #52]	@ (800123c <UART1_DMA_Transmit+0x5c>)
+ 8001208:	681b      	ldr	r3, [r3, #0]
+ 800120a:	4a0c      	ldr	r2, [pc, #48]	@ (800123c <UART1_DMA_Transmit+0x5c>)
+ 800120c:	f023 0301 	bic.w	r3, r3, #1
+ 8001210:	6013      	str	r3, [r2, #0]
+    DMA1->IFCR = DMA_IFCR_CGIF4;
+ 8001212:	4b0b      	ldr	r3, [pc, #44]	@ (8001240 <UART1_DMA_Transmit+0x60>)
+ 8001214:	f44f 5280 	mov.w	r2, #4096	@ 0x1000
+ 8001218:	605a      	str	r2, [r3, #4]
+    DMA1_Channel4->CMAR = (uint32_t)data;
+ 800121a:	4a08      	ldr	r2, [pc, #32]	@ (800123c <UART1_DMA_Transmit+0x5c>)
+ 800121c:	687b      	ldr	r3, [r7, #4]
+ 800121e:	60d3      	str	r3, [r2, #12]
+    DMA1_Channel4->CNDTR = len;
+ 8001220:	4a06      	ldr	r2, [pc, #24]	@ (800123c <UART1_DMA_Transmit+0x5c>)
+ 8001222:	887b      	ldrh	r3, [r7, #2]
+ 8001224:	6053      	str	r3, [r2, #4]
+    DMA1_Channel4->CCR |= DMA_CCR4_EN;
+ 8001226:	4b05      	ldr	r3, [pc, #20]	@ (800123c <UART1_DMA_Transmit+0x5c>)
+ 8001228:	681b      	ldr	r3, [r3, #0]
+ 800122a:	4a04      	ldr	r2, [pc, #16]	@ (800123c <UART1_DMA_Transmit+0x5c>)
+ 800122c:	f043 0301 	orr.w	r3, r3, #1
+ 8001230:	6013      	str	r3, [r2, #0]
+}
+ 8001232:	bf00      	nop
+ 8001234:	370c      	adds	r7, #12
+ 8001236:	46bd      	mov	sp, r7
+ 8001238:	bc80      	pop	{r7}
+ 800123a:	4770      	bx	lr
+ 800123c:	40020044 	.word	0x40020044
+ 8001240:	40020000 	.word	0x40020000
+
+08001244 <USART1_IRQHandler>:
+
+// --- SỬA LỖI 2: ISR chỉ chốt con trỏ, KHÔNG khởi động lại DMA ---
+void USART1_IRQHandler(void) {
+ 8001244:	b480      	push	{r7}
+ 8001246:	b083      	sub	sp, #12
+ 8001248:	af00      	add	r7, sp, #0
+    if (USART1->SR & USART_SR_IDLE) {
+ 800124a:	4b0d      	ldr	r3, [pc, #52]	@ (8001280 <USART1_IRQHandler+0x3c>)
+ 800124c:	681b      	ldr	r3, [r3, #0]
+ 800124e:	f003 0310 	and.w	r3, r3, #16
+ 8001252:	2b00      	cmp	r3, #0
+ 8001254:	d00e      	beq.n	8001274 <USART1_IRQHandler+0x30>
+        volatile uint32_t clear = USART1->SR;
+ 8001256:	4b0a      	ldr	r3, [pc, #40]	@ (8001280 <USART1_IRQHandler+0x3c>)
+ 8001258:	681b      	ldr	r3, [r3, #0]
+ 800125a:	607b      	str	r3, [r7, #4]
+        clear = USART1->DR;
+ 800125c:	4b08      	ldr	r3, [pc, #32]	@ (8001280 <USART1_IRQHandler+0x3c>)
+ 800125e:	685b      	ldr	r3, [r3, #4]
+ 8001260:	607b      	str	r3, [r7, #4]
+        (void)clear;
+ 8001262:	687b      	ldr	r3, [r7, #4]
+
+        // CNDTR tự động giảm từ 256 về 0. Trừ đi sẽ ra vị trí ghi hiện tại.
+        head_ptr = RX_RING_SIZE - DMA1_Channel5->CNDTR;
+ 8001264:	4b07      	ldr	r3, [pc, #28]	@ (8001284 <USART1_IRQHandler+0x40>)
+ 8001266:	685b      	ldr	r3, [r3, #4]
+ 8001268:	b29b      	uxth	r3, r3
+ 800126a:	f5c3 7380 	rsb	r3, r3, #256	@ 0x100
+ 800126e:	b29a      	uxth	r2, r3
+ 8001270:	4b05      	ldr	r3, [pc, #20]	@ (8001288 <USART1_IRQHandler+0x44>)
+ 8001272:	801a      	strh	r2, [r3, #0]
+    }
+}
+ 8001274:	bf00      	nop
+ 8001276:	370c      	adds	r7, #12
+ 8001278:	46bd      	mov	sp, r7
+ 800127a:	bc80      	pop	{r7}
+ 800127c:	4770      	bx	lr
+ 800127e:	bf00      	nop
+ 8001280:	40013800 	.word	0x40013800
+ 8001284:	40020058 	.word	0x40020058
+ 8001288:	20000134 	.word	0x20000134
+
+0800128c <UART_Process_MQTT_Payload>:
+
+void UART_Process_MQTT_Payload(void) {
+ 800128c:	b580      	push	{r7, lr}
+ 800128e:	b08e      	sub	sp, #56	@ 0x38
+ 8001290:	af00      	add	r7, sp, #0
+    char payload_cmd[50];
+    uint8_t index = 0;
+ 8001292:	2300      	movs	r3, #0
+ 8001294:	f887 3037 	strb.w	r3, [r7, #55]	@ 0x37
+
+    while (tail_ptr != head_ptr) {
+ 8001298:	e020      	b.n	80012dc <UART_Process_MQTT_Payload+0x50>
+        char c = rx_ring_buffer[tail_ptr];
+ 800129a:	4b27      	ldr	r3, [pc, #156]	@ (8001338 <UART_Process_MQTT_Payload+0xac>)
+ 800129c:	881b      	ldrh	r3, [r3, #0]
+ 800129e:	461a      	mov	r2, r3
+ 80012a0:	4b26      	ldr	r3, [pc, #152]	@ (800133c <UART_Process_MQTT_Payload+0xb0>)
+ 80012a2:	5c9b      	ldrb	r3, [r3, r2]
+ 80012a4:	f887 3036 	strb.w	r3, [r7, #54]	@ 0x36
+
+        if (index < 49) {
+ 80012a8:	f897 3037 	ldrb.w	r3, [r7, #55]	@ 0x37
+ 80012ac:	2b30      	cmp	r3, #48	@ 0x30
+ 80012ae:	d80a      	bhi.n	80012c6 <UART_Process_MQTT_Payload+0x3a>
+            payload_cmd[index++] = c;
+ 80012b0:	f897 3037 	ldrb.w	r3, [r7, #55]	@ 0x37
+ 80012b4:	1c5a      	adds	r2, r3, #1
+ 80012b6:	f887 2037 	strb.w	r2, [r7, #55]	@ 0x37
+ 80012ba:	3338      	adds	r3, #56	@ 0x38
+ 80012bc:	443b      	add	r3, r7
+ 80012be:	f897 2036 	ldrb.w	r2, [r7, #54]	@ 0x36
+ 80012c2:	f803 2c34 	strb.w	r2, [r3, #-52]
+        }
+        tail_ptr = (tail_ptr + 1) % RX_RING_SIZE;
+ 80012c6:	4b1c      	ldr	r3, [pc, #112]	@ (8001338 <UART_Process_MQTT_Payload+0xac>)
+ 80012c8:	881b      	ldrh	r3, [r3, #0]
+ 80012ca:	3301      	adds	r3, #1
+ 80012cc:	425a      	negs	r2, r3
+ 80012ce:	b2db      	uxtb	r3, r3
+ 80012d0:	b2d2      	uxtb	r2, r2
+ 80012d2:	bf58      	it	pl
+ 80012d4:	4253      	negpl	r3, r2
+ 80012d6:	b29a      	uxth	r2, r3
+ 80012d8:	4b17      	ldr	r3, [pc, #92]	@ (8001338 <UART_Process_MQTT_Payload+0xac>)
+ 80012da:	801a      	strh	r2, [r3, #0]
+    while (tail_ptr != head_ptr) {
+ 80012dc:	4b16      	ldr	r3, [pc, #88]	@ (8001338 <UART_Process_MQTT_Payload+0xac>)
+ 80012de:	881a      	ldrh	r2, [r3, #0]
+ 80012e0:	4b17      	ldr	r3, [pc, #92]	@ (8001340 <UART_Process_MQTT_Payload+0xb4>)
+ 80012e2:	881b      	ldrh	r3, [r3, #0]
+ 80012e4:	b29b      	uxth	r3, r3
+ 80012e6:	429a      	cmp	r2, r3
+ 80012e8:	d1d7      	bne.n	800129a <UART_Process_MQTT_Payload+0xe>
+    }
+
+    if (index > 0) {
+ 80012ea:	f897 3037 	ldrb.w	r3, [r7, #55]	@ 0x37
+ 80012ee:	2b00      	cmp	r3, #0
+ 80012f0:	d01d      	beq.n	800132e <UART_Process_MQTT_Payload+0xa2>
+        payload_cmd[index] = '\0';
+ 80012f2:	f897 3037 	ldrb.w	r3, [r7, #55]	@ 0x37
+ 80012f6:	3338      	adds	r3, #56	@ 0x38
+ 80012f8:	443b      	add	r3, r7
+ 80012fa:	2200      	movs	r2, #0
+ 80012fc:	f803 2c34 	strb.w	r2, [r3, #-52]
+
+        if (strstr(payload_cmd, "ON") != NULL) {
+ 8001300:	1d3b      	adds	r3, r7, #4
+ 8001302:	4910      	ldr	r1, [pc, #64]	@ (8001344 <UART_Process_MQTT_Payload+0xb8>)
+ 8001304:	4618      	mov	r0, r3
+ 8001306:	f000 f8c0 	bl	800148a <strstr>
+ 800130a:	4603      	mov	r3, r0
+ 800130c:	2b00      	cmp	r3, #0
+ 800130e:	d003      	beq.n	8001318 <UART_Process_MQTT_Payload+0x8c>
+            relay_set_state(RELAY_ON);
+ 8001310:	2001      	movs	r0, #1
+ 8001312:	f7ff fa95 	bl	8000840 <relay_set_state>
+        }
+        else if (strstr(payload_cmd, "OFF") != NULL) {
+            relay_set_state(RELAY_OFF);
+        }
+    }
+}
+ 8001316:	e00a      	b.n	800132e <UART_Process_MQTT_Payload+0xa2>
+        else if (strstr(payload_cmd, "OFF") != NULL) {
+ 8001318:	1d3b      	adds	r3, r7, #4
+ 800131a:	490b      	ldr	r1, [pc, #44]	@ (8001348 <UART_Process_MQTT_Payload+0xbc>)
+ 800131c:	4618      	mov	r0, r3
+ 800131e:	f000 f8b4 	bl	800148a <strstr>
+ 8001322:	4603      	mov	r3, r0
+ 8001324:	2b00      	cmp	r3, #0
+ 8001326:	d002      	beq.n	800132e <UART_Process_MQTT_Payload+0xa2>
+            relay_set_state(RELAY_OFF);
+ 8001328:	2000      	movs	r0, #0
+ 800132a:	f7ff fa89 	bl	8000840 <relay_set_state>
+}
+ 800132e:	bf00      	nop
+ 8001330:	3738      	adds	r7, #56	@ 0x38
+ 8001332:	46bd      	mov	sp, r7
+ 8001334:	bd80      	pop	{r7, pc}
+ 8001336:	bf00      	nop
+ 8001338:	20000136 	.word	0x20000136
+ 800133c:	20000034 	.word	0x20000034
+ 8001340:	20000134 	.word	0x20000134
+ 8001344:	080016a0 	.word	0x080016a0
+ 8001348:	080016a4 	.word	0x080016a4
+
+0800134c <UART1_Is_Data_Ready>:
+
+// Bộ đệm tuyến tính trung gian trả về cho tầng Application
+static char app_rx_buffer[RX_RING_SIZE];
+
+bool UART1_Is_Data_Ready(void) {
+ 800134c:	b480      	push	{r7}
+ 800134e:	af00      	add	r7, sp, #0
+    // Có dữ liệu khi con trỏ đọc (Tail) chưa đuổi kịp con trỏ ghi (Head)
+    return (head_ptr != tail_ptr);
+ 8001350:	4b06      	ldr	r3, [pc, #24]	@ (800136c <UART1_Is_Data_Ready+0x20>)
+ 8001352:	881b      	ldrh	r3, [r3, #0]
+ 8001354:	b29a      	uxth	r2, r3
+ 8001356:	4b06      	ldr	r3, [pc, #24]	@ (8001370 <UART1_Is_Data_Ready+0x24>)
+ 8001358:	881b      	ldrh	r3, [r3, #0]
+ 800135a:	429a      	cmp	r2, r3
+ 800135c:	bf14      	ite	ne
+ 800135e:	2301      	movne	r3, #1
+ 8001360:	2300      	moveq	r3, #0
+ 8001362:	b2db      	uxtb	r3, r3
+}
+ 8001364:	4618      	mov	r0, r3
+ 8001366:	46bd      	mov	sp, r7
+ 8001368:	bc80      	pop	{r7}
+ 800136a:	4770      	bx	lr
+ 800136c:	20000134 	.word	0x20000134
+ 8001370:	20000136 	.word	0x20000136
+
+08001374 <UART1_Get_Rx_Buffer>:
+
+uint8_t* UART1_Get_Rx_Buffer(void) {
+ 8001374:	b480      	push	{r7}
+ 8001376:	b083      	sub	sp, #12
+ 8001378:	af00      	add	r7, sp, #0
+    uint16_t index = 0;
+ 800137a:	2300      	movs	r3, #0
+ 800137c:	80fb      	strh	r3, [r7, #6]
+    uint16_t temp_tail = tail_ptr;
+ 800137e:	4b13      	ldr	r3, [pc, #76]	@ (80013cc <UART1_Get_Rx_Buffer+0x58>)
+ 8001380:	881b      	ldrh	r3, [r3, #0]
+ 8001382:	80bb      	strh	r3, [r7, #4]
+
+    // Rút toàn bộ dữ liệu từ Ring Buffer ra mảng tuyến tính để dùng hàm strstr()
+    while (temp_tail != head_ptr) {
+ 8001384:	e011      	b.n	80013aa <UART1_Get_Rx_Buffer+0x36>
+        app_rx_buffer[index++] = rx_ring_buffer[temp_tail];
+ 8001386:	88ba      	ldrh	r2, [r7, #4]
+ 8001388:	88fb      	ldrh	r3, [r7, #6]
+ 800138a:	1c59      	adds	r1, r3, #1
+ 800138c:	80f9      	strh	r1, [r7, #6]
+ 800138e:	4619      	mov	r1, r3
+ 8001390:	4b0f      	ldr	r3, [pc, #60]	@ (80013d0 <UART1_Get_Rx_Buffer+0x5c>)
+ 8001392:	5c9b      	ldrb	r3, [r3, r2]
+ 8001394:	b2da      	uxtb	r2, r3
+ 8001396:	4b0f      	ldr	r3, [pc, #60]	@ (80013d4 <UART1_Get_Rx_Buffer+0x60>)
+ 8001398:	545a      	strb	r2, [r3, r1]
+        temp_tail = (temp_tail + 1) % RX_RING_SIZE;
+ 800139a:	88bb      	ldrh	r3, [r7, #4]
+ 800139c:	3301      	adds	r3, #1
+ 800139e:	425a      	negs	r2, r3
+ 80013a0:	b2db      	uxtb	r3, r3
+ 80013a2:	b2d2      	uxtb	r2, r2
+ 80013a4:	bf58      	it	pl
+ 80013a6:	4253      	negpl	r3, r2
+ 80013a8:	80bb      	strh	r3, [r7, #4]
+    while (temp_tail != head_ptr) {
+ 80013aa:	4b0b      	ldr	r3, [pc, #44]	@ (80013d8 <UART1_Get_Rx_Buffer+0x64>)
+ 80013ac:	881b      	ldrh	r3, [r3, #0]
+ 80013ae:	b29b      	uxth	r3, r3
+ 80013b0:	88ba      	ldrh	r2, [r7, #4]
+ 80013b2:	429a      	cmp	r2, r3
+ 80013b4:	d1e7      	bne.n	8001386 <UART1_Get_Rx_Buffer+0x12>
+    }
+
+    app_rx_buffer[index] = '\0'; // Chốt chuỗi String (Null-terminated)
+ 80013b6:	88fb      	ldrh	r3, [r7, #6]
+ 80013b8:	4a06      	ldr	r2, [pc, #24]	@ (80013d4 <UART1_Get_Rx_Buffer+0x60>)
+ 80013ba:	2100      	movs	r1, #0
+ 80013bc:	54d1      	strb	r1, [r2, r3]
+    return (uint8_t*)app_rx_buffer;
+ 80013be:	4b05      	ldr	r3, [pc, #20]	@ (80013d4 <UART1_Get_Rx_Buffer+0x60>)
+}
+ 80013c0:	4618      	mov	r0, r3
+ 80013c2:	370c      	adds	r7, #12
+ 80013c4:	46bd      	mov	sp, r7
+ 80013c6:	bc80      	pop	{r7}
+ 80013c8:	4770      	bx	lr
+ 80013ca:	bf00      	nop
+ 80013cc:	20000136 	.word	0x20000136
+ 80013d0:	20000034 	.word	0x20000034
+ 80013d4:	20000138 	.word	0x20000138
+ 80013d8:	20000134 	.word	0x20000134
+
+080013dc <UART1_Clear_Data_Flag>:
+
+void UART1_Clear_Data_Flag(void) {
+ 80013dc:	b480      	push	{r7}
+ 80013de:	af00      	add	r7, sp, #0
+    // Ép con trỏ đọc nhảy thẳng đến con trỏ ghi -> Đánh dấu đã đọc hết toàn bộ dữ liệu
+    tail_ptr = head_ptr;
+ 80013e0:	4b04      	ldr	r3, [pc, #16]	@ (80013f4 <UART1_Clear_Data_Flag+0x18>)
+ 80013e2:	881b      	ldrh	r3, [r3, #0]
+ 80013e4:	b29a      	uxth	r2, r3
+ 80013e6:	4b04      	ldr	r3, [pc, #16]	@ (80013f8 <UART1_Clear_Data_Flag+0x1c>)
+ 80013e8:	801a      	strh	r2, [r3, #0]
+}
+ 80013ea:	bf00      	nop
+ 80013ec:	46bd      	mov	sp, r7
+ 80013ee:	bc80      	pop	{r7}
+ 80013f0:	4770      	bx	lr
+ 80013f2:	bf00      	nop
+ 80013f4:	20000134 	.word	0x20000134
+ 80013f8:	20000136 	.word	0x20000136
+
+080013fc <UART1_Clear_Rx_Buffer>:
+
+void UART1_Clear_Rx_Buffer(void) {
+ 80013fc:	b580      	push	{r7, lr}
+ 80013fe:	af00      	add	r7, sp, #0
+    // Xóa bộ đệm trung gian và đồng bộ lại con trỏ Ring Buffer
+    memset(app_rx_buffer, 0, RX_RING_SIZE);
+ 8001400:	f44f 7280 	mov.w	r2, #256	@ 0x100
+ 8001404:	2100      	movs	r1, #0
+ 8001406:	4805      	ldr	r0, [pc, #20]	@ (800141c <UART1_Clear_Rx_Buffer+0x20>)
+ 8001408:	f000 f837 	bl	800147a <memset>
+    tail_ptr = head_ptr;
+ 800140c:	4b04      	ldr	r3, [pc, #16]	@ (8001420 <UART1_Clear_Rx_Buffer+0x24>)
+ 800140e:	881b      	ldrh	r3, [r3, #0]
+ 8001410:	b29a      	uxth	r2, r3
+ 8001412:	4b04      	ldr	r3, [pc, #16]	@ (8001424 <UART1_Clear_Rx_Buffer+0x28>)
+ 8001414:	801a      	strh	r2, [r3, #0]
+}
+ 8001416:	bf00      	nop
+ 8001418:	bd80      	pop	{r7, pc}
+ 800141a:	bf00      	nop
+ 800141c:	20000138 	.word	0x20000138
+ 8001420:	20000134 	.word	0x20000134
+ 8001424:	20000136 	.word	0x20000136
+
+08001428 <Reset_Handler>:
+
+  .section .text.Reset_Handler
+  .weak Reset_Handler
+  .type Reset_Handler, %function
+Reset_Handler:
+  ldr   r0, =_estack
+ 8001428:	480d      	ldr	r0, [pc, #52]	@ (8001460 <LoopForever+0x2>)
+  mov   sp, r0          /* set stack pointer */
+ 800142a:	4685      	mov	sp, r0
+/* Call the clock system initialization function.*/
+  bl  SystemInit
+ 800142c:	f3af 8000 	nop.w
+
+/* Copy the data segment initializers from flash to SRAM */
+  ldr r0, =_sdata
+ 8001430:	480c      	ldr	r0, [pc, #48]	@ (8001464 <LoopForever+0x6>)
+  ldr r1, =_edata
+ 8001432:	490d      	ldr	r1, [pc, #52]	@ (8001468 <LoopForever+0xa>)
+  ldr r2, =_sidata
+ 8001434:	4a0d      	ldr	r2, [pc, #52]	@ (800146c <LoopForever+0xe>)
+  movs r3, #0
+ 8001436:	2300      	movs	r3, #0
+  b LoopCopyDataInit
+ 8001438:	e002      	b.n	8001440 <LoopCopyDataInit>
+
+0800143a <CopyDataInit>:
+
+CopyDataInit:
+  ldr r4, [r2, r3]
+ 800143a:	58d4      	ldr	r4, [r2, r3]
+  str r4, [r0, r3]
+ 800143c:	50c4      	str	r4, [r0, r3]
+  adds r3, r3, #4
+ 800143e:	3304      	adds	r3, #4
+
+08001440 <LoopCopyDataInit>:
+
+LoopCopyDataInit:
+  adds r4, r0, r3
+ 8001440:	18c4      	adds	r4, r0, r3
+  cmp r4, r1
+ 8001442:	428c      	cmp	r4, r1
+  bcc CopyDataInit
+ 8001444:	d3f9      	bcc.n	800143a <CopyDataInit>
+
+/* Zero fill the bss segment. */
+  ldr r2, =_sbss
+ 8001446:	4a0a      	ldr	r2, [pc, #40]	@ (8001470 <LoopForever+0x12>)
+  ldr r4, =_ebss
+ 8001448:	4c0a      	ldr	r4, [pc, #40]	@ (8001474 <LoopForever+0x16>)
+  movs r3, #0
+ 800144a:	2300      	movs	r3, #0
+  b LoopFillZerobss
+ 800144c:	e001      	b.n	8001452 <LoopFillZerobss>
+
+0800144e <FillZerobss>:
+
+FillZerobss:
+  str  r3, [r2]
+ 800144e:	6013      	str	r3, [r2, #0]
+  adds r2, r2, #4
+ 8001450:	3204      	adds	r2, #4
+
+08001452 <LoopFillZerobss>:
+
+LoopFillZerobss:
+  cmp r2, r4
+ 8001452:	42a2      	cmp	r2, r4
+  bcc FillZerobss
+ 8001454:	d3fb      	bcc.n	800144e <FillZerobss>
+
+
+/* Call static constructors */
+  bl __libc_init_array
+ 8001456:	f000 f82f 	bl	80014b8 <__libc_init_array>
+/* Call the application's entry point.*/
+
+  bl main
+ 800145a:	f7ff f9a3 	bl	80007a4 <main>
+
+0800145e <LoopForever>:
+
+LoopForever:
+  b LoopForever
+ 800145e:	e7fe      	b.n	800145e <LoopForever>
+  ldr   r0, =_estack
+ 8001460:	20005000 	.word	0x20005000
+  ldr r0, =_sdata
+ 8001464:	20000000 	.word	0x20000000
+  ldr r1, =_edata
+ 8001468:	20000000 	.word	0x20000000
+  ldr r2, =_sidata
+ 800146c:	080016b8 	.word	0x080016b8
+  ldr r2, =_sbss
+ 8001470:	20000000 	.word	0x20000000
+  ldr r4, =_ebss
+ 8001474:	20000238 	.word	0x20000238
+
+08001478 <ADC1_2_IRQHandler>:
+ * @retval : None
+*/
+  .section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b Infinite_Loop
+ 8001478:	e7fe      	b.n	8001478 <ADC1_2_IRQHandler>
+
+0800147a <memset>:
+ 800147a:	4603      	mov	r3, r0
+ 800147c:	4402      	add	r2, r0
+ 800147e:	4293      	cmp	r3, r2
+ 8001480:	d100      	bne.n	8001484 <memset+0xa>
+ 8001482:	4770      	bx	lr
+ 8001484:	f803 1b01 	strb.w	r1, [r3], #1
+ 8001488:	e7f9      	b.n	800147e <memset+0x4>
+
+0800148a <strstr>:
+ 800148a:	780a      	ldrb	r2, [r1, #0]
+ 800148c:	b570      	push	{r4, r5, r6, lr}
+ 800148e:	b96a      	cbnz	r2, 80014ac <strstr+0x22>
+ 8001490:	bd70      	pop	{r4, r5, r6, pc}
+ 8001492:	429a      	cmp	r2, r3
+ 8001494:	d109      	bne.n	80014aa <strstr+0x20>
+ 8001496:	460c      	mov	r4, r1
+ 8001498:	4605      	mov	r5, r0
+ 800149a:	f814 3f01 	ldrb.w	r3, [r4, #1]!
+ 800149e:	2b00      	cmp	r3, #0
+ 80014a0:	d0f6      	beq.n	8001490 <strstr+0x6>
+ 80014a2:	f815 6f01 	ldrb.w	r6, [r5, #1]!
+ 80014a6:	429e      	cmp	r6, r3
+ 80014a8:	d0f7      	beq.n	800149a <strstr+0x10>
+ 80014aa:	3001      	adds	r0, #1
+ 80014ac:	7803      	ldrb	r3, [r0, #0]
+ 80014ae:	2b00      	cmp	r3, #0
+ 80014b0:	d1ef      	bne.n	8001492 <strstr+0x8>
+ 80014b2:	4618      	mov	r0, r3
+ 80014b4:	e7ec      	b.n	8001490 <strstr+0x6>
+	...
+
+080014b8 <__libc_init_array>:
+ 80014b8:	b570      	push	{r4, r5, r6, lr}
+ 80014ba:	2600      	movs	r6, #0
+ 80014bc:	4d0c      	ldr	r5, [pc, #48]	@ (80014f0 <__libc_init_array+0x38>)
+ 80014be:	4b0d      	ldr	r3, [pc, #52]	@ (80014f4 <__libc_init_array+0x3c>)
+ 80014c0:	1b5b      	subs	r3, r3, r5
+ 80014c2:	109c      	asrs	r4, r3, #2
+ 80014c4:	42a6      	cmp	r6, r4
+ 80014c6:	d109      	bne.n	80014dc <__libc_init_array+0x24>
+ 80014c8:	2600      	movs	r6, #0
+ 80014ca:	f000 f819 	bl	8001500 <_init>
+ 80014ce:	4d0a      	ldr	r5, [pc, #40]	@ (80014f8 <__libc_init_array+0x40>)
+ 80014d0:	4b0a      	ldr	r3, [pc, #40]	@ (80014fc <__libc_init_array+0x44>)
+ 80014d2:	1b5b      	subs	r3, r3, r5
+ 80014d4:	109c      	asrs	r4, r3, #2
+ 80014d6:	42a6      	cmp	r6, r4
+ 80014d8:	d105      	bne.n	80014e6 <__libc_init_array+0x2e>
+ 80014da:	bd70      	pop	{r4, r5, r6, pc}
+ 80014dc:	f855 3b04 	ldr.w	r3, [r5], #4
+ 80014e0:	4798      	blx	r3
+ 80014e2:	3601      	adds	r6, #1
+ 80014e4:	e7ee      	b.n	80014c4 <__libc_init_array+0xc>
+ 80014e6:	f855 3b04 	ldr.w	r3, [r5], #4
+ 80014ea:	4798      	blx	r3
+ 80014ec:	3601      	adds	r6, #1
+ 80014ee:	e7f2      	b.n	80014d6 <__libc_init_array+0x1e>
+ 80014f0:	080016b0 	.word	0x080016b0
+ 80014f4:	080016b0 	.word	0x080016b0
+ 80014f8:	080016b0 	.word	0x080016b0
+ 80014fc:	080016b4 	.word	0x080016b4
+
+08001500 <_init>:
+ 8001500:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 8001502:	bf00      	nop
+ 8001504:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8001506:	bc08      	pop	{r3}
+ 8001508:	469e      	mov	lr, r3
+ 800150a:	4770      	bx	lr
+
+0800150c <_fini>:
+ 800150c:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 800150e:	bf00      	nop
+ 8001510:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8001512:	bc08      	pop	{r3}
+ 8001514:	469e      	mov	lr, r3
+ 8001516:	4770      	bx	lr

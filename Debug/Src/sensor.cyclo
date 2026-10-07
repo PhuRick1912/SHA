@@ -1,0 +1,7 @@
+C:/Users/PHU/Downloads/stm32cubef1/STM32Cube_FW_F1_V1.8.0/Drivers/CMSIS/Include/core_cm3.h:1511:22:__NVIC_EnableIRQ	2
+C:/Users/PHU/Downloads/stm32cubef1/STM32Cube_FW_F1_V1.8.0/Drivers/CMSIS/Include/core_cm3.h:1639:22:__NVIC_SetPriority	2
+../Src/sensor.c:7:6:sensor_exti_init	1
+../Src/sensor.c:33:6:EXTI0_IRQHandler	3
+../Src/sensor.c:48:6:EXTI1_IRQHandler	3
+../Src/sensor.c:60:6:Is_Door_Open	1
+../Src/sensor.c:64:6:Is_IR_Triggered	1

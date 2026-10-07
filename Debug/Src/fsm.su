@@ -1,0 +1,2 @@
+../Src/fsm.c:22:6:Home_Automation_FSM_Init	4	static
+../Src/fsm.c:27:6:Home_Automation_FSM_Update	16	static

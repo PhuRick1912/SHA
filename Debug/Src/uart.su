@@ -1,0 +1,10 @@
+C:/Users/PHU/Downloads/stm32cubef1/STM32Cube_FW_F1_V1.8.0/Drivers/CMSIS/Include/core_cm3.h:1511:22:__NVIC_EnableIRQ	16	static
+C:/Users/PHU/Downloads/stm32cubef1/STM32Cube_FW_F1_V1.8.0/Drivers/CMSIS/Include/core_cm3.h:1639:22:__NVIC_SetPriority	16	static
+../Src/uart.c:21:6:UART1_DMA_Init	8	static
+../Src/uart.c:51:6:UART1_DMA_Transmit	16	static
+../Src/uart.c:63:6:USART1_IRQHandler	16	static
+../Src/uart.c:74:6:UART_Process_MQTT_Payload	64	static
+../Src/uart.c:103:6:UART1_Is_Data_Ready	4	static
+../Src/uart.c:108:10:UART1_Get_Rx_Buffer	16	static
+../Src/uart.c:122:6:UART1_Clear_Data_Flag	4	static
+../Src/uart.c:127:6:UART1_Clear_Rx_Buffer	8	static
