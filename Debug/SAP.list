@@ -2587,7 +2587,7 @@ void UART1_DMA_Init(void) {
  800113a:	f240 2271 	movw	r2, #625	@ 0x271
  800113e:	609a      	str	r2, [r3, #8]
 
-    // --- SỬA LỖI 1: Trỏ đúng vào Ring Buffer ---
+
     DMA1_Channel5->CCR &= ~DMA_CCR5_EN;
  8001140:	4b22      	ldr	r3, [pc, #136]	@ (80011cc <UART1_DMA_Init+0xd8>)
  8001142:	681b      	ldr	r3, [r3, #0]
@@ -2602,11 +2602,11 @@ void UART1_DMA_Init(void) {
  8001154:	4b1d      	ldr	r3, [pc, #116]	@ (80011cc <UART1_DMA_Init+0xd8>)
  8001156:	4a1f      	ldr	r2, [pc, #124]	@ (80011d4 <UART1_DMA_Init+0xe0>)
  8001158:	609a      	str	r2, [r3, #8]
-    DMA1_Channel5->CMAR = (uint32_t)rx_ring_buffer; // Trỏ vào mảng vòng
+    DMA1_Channel5->CMAR = (uint32_t)rx_ring_buffer;
  800115a:	4b1c      	ldr	r3, [pc, #112]	@ (80011cc <UART1_DMA_Init+0xd8>)
  800115c:	4a1e      	ldr	r2, [pc, #120]	@ (80011d8 <UART1_DMA_Init+0xe4>)
  800115e:	60da      	str	r2, [r3, #12]
-    DMA1_Channel5->CNDTR = RX_RING_SIZE;            // Kích thước mảng vòng
+    DMA1_Channel5->CNDTR = RX_RING_SIZE;
  8001160:	4b1a      	ldr	r3, [pc, #104]	@ (80011cc <UART1_DMA_Init+0xd8>)
  8001162:	f44f 7280 	mov.w	r2, #256	@ 0x100
  8001166:	605a      	str	r2, [r3, #4]
@@ -2727,7 +2727,7 @@ void UART1_DMA_Transmit(uint8_t *data, uint16_t len) {
 
 08001244 <USART1_IRQHandler>:
 
-// --- SỬA LỖI 2: ISR chỉ chốt con trỏ, KHÔNG khởi động lại DMA ---
+
 void USART1_IRQHandler(void) {
  8001244:	b480      	push	{r7}
  8001246:	b083      	sub	sp, #12
@@ -2749,7 +2749,7 @@ void USART1_IRQHandler(void) {
         (void)clear;
  8001262:	687b      	ldr	r3, [r7, #4]
 
-        // CNDTR tự động giảm từ 256 về 0. Trừ đi sẽ ra vị trí ghi hiện tại.
+
         head_ptr = RX_RING_SIZE - DMA1_Channel5->CNDTR;
  8001264:	4b07      	ldr	r3, [pc, #28]	@ (8001284 <USART1_IRQHandler+0x40>)
  8001266:	685b      	ldr	r3, [r3, #4]
@@ -2880,13 +2880,13 @@ void UART_Process_MQTT_Payload(void) {
 
 0800134c <UART1_Is_Data_Ready>:
 
-// Bộ đệm tuyến tính trung gian trả về cho tầng Application
+
 static char app_rx_buffer[RX_RING_SIZE];
 
 bool UART1_Is_Data_Ready(void) {
  800134c:	b480      	push	{r7}
  800134e:	af00      	add	r7, sp, #0
-    // Có dữ liệu khi con trỏ đọc (Tail) chưa đuổi kịp con trỏ ghi (Head)
+
     return (head_ptr != tail_ptr);
  8001350:	4b06      	ldr	r3, [pc, #24]	@ (800136c <UART1_Is_Data_Ready+0x20>)
  8001352:	881b      	ldrh	r3, [r3, #0]
@@ -2920,7 +2920,7 @@ uint8_t* UART1_Get_Rx_Buffer(void) {
  8001380:	881b      	ldrh	r3, [r3, #0]
  8001382:	80bb      	strh	r3, [r7, #4]
 
-    // Rút toàn bộ dữ liệu từ Ring Buffer ra mảng tuyến tính để dùng hàm strstr()
+
     while (temp_tail != head_ptr) {
  8001384:	e011      	b.n	80013aa <UART1_Get_Rx_Buffer+0x36>
         app_rx_buffer[index++] = rx_ring_buffer[temp_tail];
@@ -2952,7 +2952,7 @@ uint8_t* UART1_Get_Rx_Buffer(void) {
  80013b4:	d1e7      	bne.n	8001386 <UART1_Get_Rx_Buffer+0x12>
     }
 
-    app_rx_buffer[index] = '\0'; // Chốt chuỗi String (Null-terminated)
+    app_rx_buffer[index] = '\0';
  80013b6:	88fb      	ldrh	r3, [r7, #6]
  80013b8:	4a06      	ldr	r2, [pc, #24]	@ (80013d4 <UART1_Get_Rx_Buffer+0x60>)
  80013ba:	2100      	movs	r1, #0
@@ -2976,7 +2976,7 @@ uint8_t* UART1_Get_Rx_Buffer(void) {
 void UART1_Clear_Data_Flag(void) {
  80013dc:	b480      	push	{r7}
  80013de:	af00      	add	r7, sp, #0
-    // Ép con trỏ đọc nhảy thẳng đến con trỏ ghi -> Đánh dấu đã đọc hết toàn bộ dữ liệu
+
     tail_ptr = head_ptr;
  80013e0:	4b04      	ldr	r3, [pc, #16]	@ (80013f4 <UART1_Clear_Data_Flag+0x18>)
  80013e2:	881b      	ldrh	r3, [r3, #0]
@@ -2997,7 +2997,7 @@ void UART1_Clear_Data_Flag(void) {
 void UART1_Clear_Rx_Buffer(void) {
  80013fc:	b580      	push	{r7, lr}
  80013fe:	af00      	add	r7, sp, #0
-    // Xóa bộ đệm trung gian và đồng bộ lại con trỏ Ring Buffer
+
     memset(app_rx_buffer, 0, RX_RING_SIZE);
  8001400:	f44f 7280 	mov.w	r2, #256	@ 0x100
  8001404:	2100      	movs	r1, #0
