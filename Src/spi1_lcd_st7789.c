@@ -59,30 +59,31 @@ void spi1_config(void)
 	SPI1->CR1 |= SSI;
 	SPI1->CR1 |= SSM;
 
-	// KÍCH HOẠT: Yêu cầu DMA khi buffer TX của SPI trống
-	    SPI1->CR2 |= SPI_CR2_TXDMAEN;
+	// KÍCH HOẠT: DMA khi buffer TX của SPI trống
+	SPI1->CR2 |= SPI_CR2_TXDMAEN;
 
 	SPI1->CR1 |= SPEN;
 }
 
 void spi1_dma_init(void) {
-    // 1. Cấp xung nhịp cho DMA1
+    //Cấp xung nhịp cho DMA1
     RCC->AHBENR |= DMA1EN;
 
-    // 2. Tắt Channel 3 trước khi cấu hình (Bảo vệ phần cứng)
+    // Tắt Channel 3
     DMA1_Channel3->CCR &= ~DMA_CCR_EN;
 
-    // 3. Trỏ địa chỉ Ngoại vi (Peripheral) cố định vào thanh ghi Data của SPI1
+    // Trỏ địa chỉ Ngoại vi (Peripheral) cố định vào thanh ghi Data của SPI1
     DMA1_Channel3->CPAR = (uint32_t)&SPI1->DR;
 
-    // 4. Cấu hình Channel 3: Hướng Mem->Periph, Auto-increment Memory
-    // MSIZE = 0 (8-bit), PSIZE = 0 (8-bit), không dùng ngắt (Polling cờ ISR)
+    //  Cấu hình Channel 3: Hướng Mem->Periph, Auto-increment Memory
+    // MSIZE = 0 (8-bit), PSIZE = 0 (8-bit)
     DMA1_Channel3->CCR = DMA_CCR_DIR | DMA_CCR_MINC;
 }
 
 // Hàm gửi dữ liệu Non-blocking / Blocking-on-Start
 void spi1_dma_transmit(uint8_t *data, uint32_t size) {
-    // Đợi nếu DMA vẫn đang bận gửi gói trước đó
+	if (size == 0) return;
+	// Đợi nếu DMA vẫn đang bận gửi gói trước đó
     if (DMA1_Channel3->CCR & DMA_CCR_EN) {
         while (!(DMA1->ISR & DMA_ISR_TCIF3)) {}
     }

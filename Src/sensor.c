@@ -34,8 +34,8 @@ void EXTI0_IRQHandler(void) {
     if (EXTI->PR & (1U << 0)) {
         EXTI->PR |= (1U << 0); // Xóa cờ ngắt phần cứng
 
-        // Đọc lại thanh ghi IDR để chốt trạng thái vật lý thực tế
-        // (Lưu ý: Nếu làm thực tế, cần tích hợp thêm thuật toán Debounce tại đây)
+        // Đọc lại thanh ghi IDR
+
         if (GPIOA->IDR & (1U << 0)) {
             state_door = true;  // Chân PA0 bị thả nổi lên mức 1 -> Cửa Mở
         } else {

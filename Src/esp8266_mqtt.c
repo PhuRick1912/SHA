@@ -144,35 +144,86 @@ void ESP8266_MQTT_Update(void) {
                             current_esp_state = ESP_STATE_ERROR;
                         }
                         break;
+//                    case ESP_STATE_RUNNING:
+//                                if (UART1_Is_Data_Ready()) {
+//                                    char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+//
+//
+//                                    if (strstr(rx_buf, "+MQTTSUBRECV") != NULL) {
+//
+//                                        // Tìm kiếm Payload lệnh thực thi
+//                                        if (strstr(rx_buf, "ON") != NULL) {
+//                                            relay_set_state(RELAY_ON); // Bật thiết bị
+//
+//                                            // Phản hồi trạng thái ngược lên App
+//                                            const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"ON\",1,0\r\n";
+//                                            UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
+//                                        }
+//                                        else if (strstr(rx_buf, "OFF") != NULL) {
+//                                            relay_set_state(RELAY_OFF); // Tắt thiết bị
+//
+//                                            // Phản hồi trạng thái ngược lên App
+//                                            const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"OFF\",1,0\r\n";
+//                                            UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
+//                                        }
+//                                    }
+//
+//
+//                                    UART1_Clear_Rx_Buffer();
+//                                    UART1_Clear_Data_Flag();
+//                                }
+//                                break;
                     case ESP_STATE_RUNNING:
-                                if (UART1_Is_Data_Ready()) {
-                                    char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+                        // 1. Ưu tiên xử lý lệnh từ Server gửi xuống (App điều khiển)
+                        if (UART1_Is_Data_Ready()) {
+                            char* rx_buf = (char*)UART1_Get_Rx_Buffer();
 
-
-                                    if (strstr(rx_buf, "+MQTTSUBRECV") != NULL) {
-
-                                        // Tìm kiếm Payload lệnh thực thi
-                                        if (strstr(rx_buf, "ON") != NULL) {
-                                            relay_set_state(RELAY_ON); // Bật thiết bị
-
-                                            // Phản hồi trạng thái ngược lên App
-                                            const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"ON\",1,0\r\n";
-                                            UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
-                                        }
-                                        else if (strstr(rx_buf, "OFF") != NULL) {
-                                            relay_set_state(RELAY_OFF); // Tắt thiết bị
-
-                                            // Phản hồi trạng thái ngược lên App
-                                            const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"OFF\",1,0\r\n";
-                                            UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
-                                        }
-                                    }
-
-
-                                    UART1_Clear_Rx_Buffer();
-                                    UART1_Clear_Data_Flag();
+                            if (strstr(rx_buf, "+MQTTSUBRECV") != NULL) {
+                                if (strstr(rx_buf, "ON") != NULL) {
+                                    relay_set_state(RELAY_ON);
+                                    // Hàm relay_set_state đã tự động bật flag_relay_changed = true
                                 }
-                                break;
+                                else if (strstr(rx_buf, "OFF") != NULL) {
+                                    relay_set_state(RELAY_OFF);
+                                }
+                            }
+                            UART1_Clear_Rx_Buffer();
+                            UART1_Clear_Data_Flag();
+                        }
+                        // 2. Kiểm tra nếu có sự thay đổi rơ-le (do App hoặc do Cảm biến FSM)
+                        else if (flag_relay_changed == true) {
+                            if (current_relay_state == RELAY_ON) {
+                                Send_AT_Command("AT+MQTTPUB=0,\"home/status/relay\",\"ON\",1,0\r\n", ESP_STATE_WAIT_PUB);
+                            } else {
+                                Send_AT_Command("AT+MQTTPUB=0,\"home/status/relay\",\"OFF\",1,0\r\n", ESP_STATE_WAIT_PUB);
+                            }
+                        }
+                        break;
+
+                    // --- TRẠNG THÁI MỚI: CHỜ XÁC NHẬN PUBLISH ---
+                    case ESP_STATE_WAIT_PUB:
+                        if (UART1_Is_Data_Ready()) {
+                            char* rx_buf = (char*)UART1_Get_Rx_Buffer();
+
+                            // Nhận được OK -> Publish thành công
+                            if (strstr(rx_buf, "OK") != NULL) {
+                                flag_relay_changed = false; // Xóa cờ
+                                current_esp_state = ESP_STATE_RUNNING; // Quay lại nghe ngóng
+                            }
+                            // Lỗi từ ESP -> Hủy cờ để tránh vòng lặp chết, báo lỗi (nếu cần)
+                            else if (strstr(rx_buf, "ERROR") != NULL) {
+                                flag_relay_changed = false;
+                                current_esp_state = ESP_STATE_RUNNING;
+                            }
+                            UART1_Clear_Rx_Buffer();
+                            UART1_Clear_Data_Flag();
+                        }
+                        // Quá thời gian ESP không phản hồi -> Hủy cờ, quay lại RUNNING
+                        else if ((current_tick - command_tick) > AT_CMD_TIMEOUT_MS) {
+                            flag_relay_changed = false;
+                            current_esp_state = ESP_STATE_RUNNING;
+                        }
+                        break;
 
                             // --- XỬ LÝ LỖI ---
                             case ESP_STATE_ERROR:
@@ -189,24 +240,3 @@ void ESP8266_MQTT_Update(void) {
                         }
                     }
 
-void UART_Process_MQTT_Publish(void) {
-    // Kiểm tra cờ sự kiện từ Relay
-    if (flag_relay_changed == true) {
-
-        // Kiểm tra xem luồng DMA TX có đang bận gửi gói tin nào khác không
-        // (Tránh ghi đè buffer TX khi ESP8266 đang bận xử lý)
-        if ((DMA1_Channel4->CCR & (1U << 0)) == 0) { // DMA_CCR4_EN == 0
-
-            flag_relay_changed = false;
-
-            if (current_relay_state == RELAY_ON) {
-                const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"ON\",1,0\r\n";
-                UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
-            }
-            else {
-                const char* pub_cmd = "AT+MQTTPUB=0,\"home/status/relay\",\"OFF\",1,0\r\n";
-                UART1_DMA_Transmit((uint8_t*)pub_cmd, strlen(pub_cmd));
-            }
-        }
-    }
-}

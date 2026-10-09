@@ -35,7 +35,8 @@ typedef enum {
     ESP_STATE_MQTT_SUB,
     ESP_STATE_WAIT_MQTT_SUB,
 
-    ESP_STATE_RUNNING, // Trạng thái hoạt động bình thường, chờ lệnh từ App
+    ESP_STATE_RUNNING,// Trạng thái hoạt động bình thường, chờ lệnh từ App
+	ESP_STATE_WAIT_PUB,
     ESP_STATE_ERROR    // Trạng thái lỗi, cần Reset
 } ESP_State_t;
 

@@ -17,6 +17,7 @@
 volatile uint8_t rx_ring_buffer[RX_RING_SIZE];
 volatile uint16_t head_ptr = 0;
 uint16_t tail_ptr = 0;
+static char app_rx_buffer[RX_RING_SIZE];
 
 void UART1_DMA_Init(void) {
     RCC->APB2ENR |= GPIOAEN | USART1EN | AFIOEN;
@@ -30,15 +31,17 @@ void UART1_DMA_Init(void) {
 
 
     DMA1_Channel5->CCR &= ~DMA_CCR5_EN;
-    DMA1->IFCR = DMA_IFCR_CGIF4 | DMA_IFCR_CGIF5;
-    DMA1_Channel5->CPAR = (uint32_t)&USART1->DR;
-    DMA1_Channel5->CMAR = (uint32_t)rx_ring_buffer;
-    DMA1_Channel5->CNDTR = RX_RING_SIZE;
-    DMA1_Channel5->CCR = DMA_CCR5_MINC | DMA_CCR5_CIRC;
+
+    DMA1->IFCR = DMA_IFCR_CGIF4 | DMA_IFCR_CGIF5;   // xóa cờ ngắt
+    DMA1_Channel5->CPAR = (uint32_t)&USART1->DR;    // gắn DATA vào PER
+    DMA1_Channel5->CMAR = (uint32_t)rx_ring_buffer; // gắn buffer vào MEM
+    DMA1_Channel5->CNDTR = RX_RING_SIZE;            // length
+    DMA1_Channel5->CCR = DMA_CCR5_MINC | DMA_CCR5_CIRC; // tự động tăng MEM và chế độ vòng
+
     DMA1_Channel5->CCR |= DMA_CCR5_EN;
 
     DMA1_Channel4->CPAR = (uint32_t)&USART1->DR;
-    DMA1_Channel4->CCR = DMA_CCR4_MINC | DMA_CCR4_DIR;
+    DMA1_Channel4->CCR = DMA_CCR4_MINC | DMA_CCR4_DIR;  // MEM to PER
 
     USART1->CR3 |= USART_CR3_DMAR | USART_CR3_DMAT;
     USART1->CR1 |= USART_CR1_IDLEIE;
@@ -50,12 +53,14 @@ void UART1_DMA_Init(void) {
 
 void UART1_DMA_Transmit(uint8_t *data, uint16_t len) {
 	if (DMA1_Channel4->CCR & DMA_CCR4_EN) {
-	        while (!(DMA1->ISR & DMA_ISR_TCIF4)) {}
+	        while (!(DMA1->ISR & DMA_ISR_TCIF4)) {}   //chờ truyền byte trước xong
 	}
     DMA1_Channel4->CCR &= ~DMA_CCR4_EN;
-    DMA1->IFCR = DMA_IFCR_CGIF4;
+
+    DMA1->IFCR = DMA_IFCR_CGIF4; // xóa cờ ngắt
     DMA1_Channel4->CMAR = (uint32_t)data;
     DMA1_Channel4->CNDTR = len;
+
     DMA1_Channel4->CCR |= DMA_CCR4_EN;
 }
 
@@ -74,7 +79,7 @@ void USART1_IRQHandler(void) {
 
 
 
-static char app_rx_buffer[RX_RING_SIZE];
+
 
 bool UART1_Is_Data_Ready(void) {
 

@@ -8,4 +8,5 @@
 "./Src/sysmem.o"
 "./Src/timer.o"
 "./Src/uart.o"
+"./Src/w25q64.o"
 "./Startup/startup_stm32f103c8tx.o"
