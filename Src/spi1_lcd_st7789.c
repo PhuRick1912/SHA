@@ -191,108 +191,108 @@ static void SPI_SendByte(uint8_t byte) {
 //    ST7789_SendCommand(0x2C);
 //}
 
-void ILI9341_SendCommand(uint8_t cmd) {
-    ILI9341_DC_CMD();       // Kéo DC xuống mức 0
-    ILI9341_CS_SELECT();    // Kéo CS xuống mức 0
-    SPI_SendByte(cmd);
-    ILI9341_CS_DESELECT();  // Trả CS lên mức 1
-}
-
-void ILI9341_SendData(uint8_t data) {
-    ILI9341_DC_DATA();      // Kéo DC lên mức 1
-    ILI9341_CS_SELECT();
-    SPI_SendByte(data);
-    ILI9341_CS_DESELECT();
-}
-
-void ILI9341_Init(void) {
-    // 1. Hard Reset phần cứng
-    ILI9341_CS_DESELECT();
-    ILI9341_RST_HIGH();
-    Delay_ms(10);
-    ILI9341_RST_LOW();
-    Delay_ms(20);
-    ILI9341_RST_HIGH();
-    Delay_ms(120); // Chờ IC ổn định
-
-    // 2. Software Reset (Khuyên dùng trên ILI9341)
-    ILI9341_SendCommand(0x01);
-    Delay_ms(100);
-
-    // 3. Chuỗi cấu hình Nguồn & VCOM (BẮT BUỘC cho Proteus)
-    ILI9341_SendCommand(0xC0); // Power Control 1
-    ILI9341_SendData(0x23);    // VRH[5:0]
-
-    ILI9341_SendCommand(0xC1); // Power Control 2
-    ILI9341_SendData(0x10);    // SAP[2:0];BT[3:0]
-
-    ILI9341_SendCommand(0xC5); // VCOM Control 1
-    ILI9341_SendData(0x3E);
-    ILI9341_SendData(0x28);
-
-    ILI9341_SendCommand(0xC7); // VCOM Control 2
-    ILI9341_SendData(0x86);
-
-    // 4. Memory Access Control (MADCTL)
-    ILI9341_SendCommand(0x36);
-    ILI9341_SendData(0x48);    // 0x48: Định dạng BGR, quét dọc (Chuẩn của ILI9341 Proteus)
-
-    // 5. Pixel Format (16-bit RGB565)
-    ILI9341_SendCommand(0x3A);
-    ILI9341_SendData(0x55);    // 0x55 thay vì 0x05 của ST7789
-
-    // 6. Normal Display (Tắt Inversion)
-    ILI9341_SendCommand(0x20);
-
-    // 7. Thoát chế độ ngủ & Bật hiển thị
-    ILI9341_SendCommand(0x11); // Sleep Out
-    Delay_ms(120);
-
-    ILI9341_SendCommand(0x29); // Display ON
-    Delay_ms(20);
-
-
-    ILI9341_BLK_ON();
-}
-
-void ILI9341_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
-
-    ILI9341_SendCommand(0x2A);
-    ILI9341_SendData(x0 >> 8);
-    ILI9341_SendData(x0 & 0xFF);
-    ILI9341_SendData(x1 >> 8);
-    ILI9341_SendData(x1 & 0xFF);
-
-
-    ILI9341_SendCommand(0x2B);
-    ILI9341_SendData(y0 >> 8);
-    ILI9341_SendData(y0 & 0xFF);
-    ILI9341_SendData(y1 >> 8);
-    ILI9341_SendData(y1 & 0xFF);
-
-
-    ILI9341_SendCommand(0x2C);
-}
-void ILI9341_FillColor(uint16_t color) {
-    uint8_t color_high = color >> 8;
-    uint8_t color_low = color & 0xFF;
-
-    uint8_t dma_buffer[4800];
-    for(uint16_t i = 0; i < 4800; i += 2) {
-        dma_buffer[i] = color_high;
-        dma_buffer[i+1] = color_low;
-    }
-
-    ILI9341_SetWindow(0, 0, 239, 319);
-
-    ILI9341_DC_DATA();
-    ILI9341_CS_SELECT();
-
-
-    for(uint16_t chunk = 0; chunk < 32; chunk++) {
-        spi1_dma_transmit(dma_buffer, 4800);
-        spi1_dma_wait_complete();
-    }
-
-    ILI9341_CS_DESELECT();
-}
+//void ILI9341_SendCommand(uint8_t cmd) {
+//    ILI9341_DC_CMD();       // Kéo DC xuống mức 0
+//    ILI9341_CS_SELECT();    // Kéo CS xuống mức 0
+//    SPI_SendByte(cmd);
+//    ILI9341_CS_DESELECT();  // Trả CS lên mức 1
+//}
+//
+//void ILI9341_SendData(uint8_t data) {
+//    ILI9341_DC_DATA();      // Kéo DC lên mức 1
+//    ILI9341_CS_SELECT();
+//    SPI_SendByte(data);
+//    ILI9341_CS_DESELECT();
+//}
+//
+//void ILI9341_Init(void) {
+//    // 1. Hard Reset phần cứng
+//    ILI9341_CS_DESELECT();
+//    ILI9341_RST_HIGH();
+//    Delay_ms(10);
+//    ILI9341_RST_LOW();
+//    Delay_ms(20);
+//    ILI9341_RST_HIGH();
+//    Delay_ms(120); // Chờ IC ổn định
+//
+//    // 2. Software Reset (Khuyên dùng trên ILI9341)
+//    ILI9341_SendCommand(0x01);
+//    Delay_ms(100);
+//
+//    // 3. Chuỗi cấu hình Nguồn & VCOM (BẮT BUỘC cho Proteus)
+//    ILI9341_SendCommand(0xC0); // Power Control 1
+//    ILI9341_SendData(0x23);    // VRH[5:0]
+//
+//    ILI9341_SendCommand(0xC1); // Power Control 2
+//    ILI9341_SendData(0x10);    // SAP[2:0];BT[3:0]
+//
+//    ILI9341_SendCommand(0xC5); // VCOM Control 1
+//    ILI9341_SendData(0x3E);
+//    ILI9341_SendData(0x28);
+//
+//    ILI9341_SendCommand(0xC7); // VCOM Control 2
+//    ILI9341_SendData(0x86);
+//
+//    // 4. Memory Access Control (MADCTL)
+//    ILI9341_SendCommand(0x36);
+//    ILI9341_SendData(0x48);    // 0x48: Định dạng BGR, quét dọc (Chuẩn của ILI9341 Proteus)
+//
+//    // 5. Pixel Format (16-bit RGB565)
+//    ILI9341_SendCommand(0x3A);
+//    ILI9341_SendData(0x55);    // 0x55 thay vì 0x05 của ST7789
+//
+//    // 6. Normal Display (Tắt Inversion)
+//    ILI9341_SendCommand(0x20);
+//
+//    // 7. Thoát chế độ ngủ & Bật hiển thị
+//    ILI9341_SendCommand(0x11); // Sleep Out
+//    Delay_ms(120);
+//
+//    ILI9341_SendCommand(0x29); // Display ON
+//    Delay_ms(20);
+//
+//
+//    ILI9341_BLK_ON();
+//}
+//
+//void ILI9341_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+//
+//    ILI9341_SendCommand(0x2A);
+//    ILI9341_SendData(x0 >> 8);
+//    ILI9341_SendData(x0 & 0xFF);
+//    ILI9341_SendData(x1 >> 8);
+//    ILI9341_SendData(x1 & 0xFF);
+//
+//
+//    ILI9341_SendCommand(0x2B);
+//    ILI9341_SendData(y0 >> 8);
+//    ILI9341_SendData(y0 & 0xFF);
+//    ILI9341_SendData(y1 >> 8);
+//    ILI9341_SendData(y1 & 0xFF);
+//
+//
+//    ILI9341_SendCommand(0x2C);
+//}
+//void ILI9341_FillColor(uint16_t color) {
+//    uint8_t color_high = color >> 8;
+//    uint8_t color_low = color & 0xFF;
+//
+//    uint8_t dma_buffer[4800];
+//    for(uint16_t i = 0; i < 4800; i += 2) {
+//        dma_buffer[i] = color_high;
+//        dma_buffer[i+1] = color_low;
+//    }
+//
+//    ILI9341_SetWindow(0, 0, 239, 319);
+//
+//    ILI9341_DC_DATA();
+//    ILI9341_CS_SELECT();
+//
+//
+//    for(uint16_t chunk = 0; chunk < 32; chunk++) {
+//        spi1_dma_transmit(dma_buffer, 4800);
+//        spi1_dma_wait_complete();
+//    }
+//
+//    ILI9341_CS_DESELECT();
+//}

@@ -33,37 +33,37 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := SAP
+BUILD_ARTIFACT_NAME := SHA
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-SAP.elf \
+SHA.elf \
 
 MAP_FILES += \
-SAP.map \
+SHA.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-SAP.list \
+SHA.list \
 
 OBJCOPY_HEX += \
-SAP.hex \
+SHA.hex \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: SAP.elf secondary-outputs
+main-build: SHA.elf secondary-outputs
 
 # Tool invocations
-SAP.elf SAP.map: $(OBJS) $(USER_OBJS) D:\PJHTN\SAP\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "SAP.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\PJHTN\SAP\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SAP.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+SHA.elf SHA.map: $(OBJS) $(USER_OBJS) C:\PJHTN\SHA\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "SHA.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\PJHTN\SHA\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SHA.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -72,19 +72,19 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-SAP.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "SAP.list"
+SHA.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "SHA.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-SAP.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "SAP.hex"
+SHA.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "SHA.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) SAP.elf SAP.hex SAP.list SAP.map default.size.stdout
+	-$(RM) SHA.elf SHA.hex SHA.list SHA.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX)

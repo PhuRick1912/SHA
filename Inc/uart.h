@@ -7,8 +7,8 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define RX_BUFFER_SIZE 50
 
+#define RX_RING_SIZE 256
 
 
 
