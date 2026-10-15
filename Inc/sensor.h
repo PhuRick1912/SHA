@@ -8,7 +8,6 @@
 #define AFIOEN		(1U<<0)
 #define GPIOAEN 	(1U<<2)
 
-
 void sensor_exti_init(void);
 bool Is_Door_Open(void);
 bool Is_IR_Triggered(void);

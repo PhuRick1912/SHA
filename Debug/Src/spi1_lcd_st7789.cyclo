@@ -5,3 +5,7 @@
 ../Src/spi1_lcd_st7789.c:104:6:spi1_dma_wait_complete	3
 ../Src/spi1_lcd_st7789.c:113:13:Delay_ms	2
 ../Src/spi1_lcd_st7789.c:119:13:SPI_SendByte	4
+../Src/spi1_lcd_st7789.c:126:6:ST7789_SendCommand	1
+../Src/spi1_lcd_st7789.c:133:6:ST7789_SendData	1
+../Src/spi1_lcd_st7789.c:140:6:ST7789_Init	1
+../Src/spi1_lcd_st7789.c:175:6:ST7789_SetWindow	1

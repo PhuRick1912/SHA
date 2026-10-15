@@ -123,73 +123,73 @@ static void SPI_SendByte(uint8_t byte) {
     while(SPI1->SR & SR_BSY) {}     // Đợi nhịp Clock cuối cùng kết thúc
 }
 
-//void ST7789_SendCommand(uint8_t cmd) {
-//    ST7789_DC_CMD();       // Kéo DC xuống mức 0
-//    ST7789_CS_SELECT();    // Kéo CS xuống mức 0
-//    SPI_SendByte(cmd);
-//    ST7789_CS_DESELECT();  // Trả CS lên mức 1
-//}
-//
-//void ST7789_SendData(uint8_t data) {
-//    ST7789_DC_DATA();      // Kéo DC lên mức 1
-//    ST7789_CS_SELECT();
-//    SPI_SendByte(data);
-//    ST7789_CS_DESELECT();
-//}
-//
-//void ST7789_Init(void) {
-//    // 1. Hard Reset phần cứng
-//    ST7789_CS_DESELECT();
-//    ST7789_RST_HIGH();
-//    Delay_ms(10);
-//    ST7789_RST_LOW();
-//    Delay_ms(10);
-//    ST7789_RST_HIGH();
-//    Delay_ms(120); // ST7789 cần ít nhất 120ms sau khi Reset
-//
-//    // 2. Thoát chế độ ngủ (Sleep Out)
-//    ST7789_SendCommand(0x11);
-//    Delay_ms(120);
-//
-//    // 3. Cấu hình định dạng màu 16-bit (RGB565)
-//    ST7789_SendCommand(0x3A);
-//    ST7789_SendData(0x05); // 0x05 = 16-bit/pixel
-//
-//    // 4. Cấu hình hướng hiển thị (MADCTL)
-//    ST7789_SendCommand(0x36);
-//    ST7789_SendData(0x00); // 0x00: Mặc định. Có thể thay đổi 0x70, 0xA0 để xoay ngang/dọc
-//
-//    // 5. Cấu hình Inversion (Panel IPS của ST7789 bắt buộc bật Invert)
-//    ST7789_SendCommand(0x21); // Inversion ON (Nếu màu bị âm bản, đổi thành 0x20)
-//
-//    // 6. Bật màn hình hiển thị
-//    ST7789_SendCommand(0x13); // Normal Display Mode On
-//    ST7789_SendCommand(0x29); // Display On
-//    Delay_ms(20);
-//
-//    // 7. Bật đèn nền
-//    ST7789_BLK_ON();
-//}
-//
-//// Hàm khoanh vùng cập nhật Pixel (Ứng dụng cụ thể đoạn code bạn hỏi)
-//void ST7789_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
-//    // Cài đặt địa chỉ cột (Column Address Set)
-//    ST7789_SendCommand(0x2A);
-//    ST7789_SendData(x0 >> 8);
-//    ST7789_SendData(x0 & 0xFF);
-//    ST7789_SendData(x1 >> 8);
-//    ST7789_SendData(x1 & 0xFF);
-//
-//    // Cài đặt địa chỉ hàng (Row Address Set)
-//    ST7789_SendCommand(0x2B);
-//    ST7789_SendData(y0 >> 8);
-//    ST7789_SendData(y0 & 0xFF);
-//    ST7789_SendData(y1 >> 8);
-//    ST7789_SendData(y1 & 0xFF);
-//
-//    // Lệnh chuẩn bị ghi RAM (Memory Write) - Ngay sau lệnh này là đẩy Data Pixel
-//    ST7789_SendCommand(0x2C);
-//}
+void ST7789_SendCommand(uint8_t cmd) {
+    ST7789_DC_CMD();       // Kéo DC xuống mức 0
+    ST7789_CS_SELECT();    // Kéo CS xuống mức 0
+    SPI_SendByte(cmd);
+    ST7789_CS_DESELECT();  // Trả CS lên mức 1
+}
+
+void ST7789_SendData(uint8_t data) {
+    ST7789_DC_DATA();      // Kéo DC lên mức 1
+    ST7789_CS_SELECT();
+    SPI_SendByte(data);
+    ST7789_CS_DESELECT();
+}
+
+void ST7789_Init(void) {
+    // 1. Hard Reset phần cứng
+    ST7789_CS_DESELECT();
+    ST7789_RST_HIGH();
+    Delay_ms(10);
+    ST7789_RST_LOW();
+    Delay_ms(10);
+    ST7789_RST_HIGH();
+    Delay_ms(120); // ST7789 cần ít nhất 120ms sau khi Reset
+
+    // 2. Thoát chế độ ngủ (Sleep Out)
+    ST7789_SendCommand(0x11);
+    Delay_ms(120);
+
+    // 3. Cấu hình định dạng màu 16-bit (RGB565)
+    ST7789_SendCommand(0x3A);
+    ST7789_SendData(0x05); // 0x05 = 16-bit/pixel
+
+    // 4. Cấu hình hướng hiển thị (MADCTL)
+    ST7789_SendCommand(0x36);
+    ST7789_SendData(0x00); // 0x00: Mặc định. Có thể thay đổi 0x70, 0xA0 để xoay ngang/dọc
+
+    // 5. Cấu hình Inversion (Panel IPS của ST7789 bắt buộc bật Invert)
+    ST7789_SendCommand(0x21); // Inversion ON (Nếu màu bị âm bản, đổi thành 0x20)
+
+    // 6. Bật màn hình hiển thị
+    ST7789_SendCommand(0x13); // Normal Display Mode On
+    ST7789_SendCommand(0x29); // Display On
+    Delay_ms(20);
+
+    // 7. Bật đèn nền
+    ST7789_BLK_ON();
+}
+
+// Hàm khoanh vùng cập nhật Pixel (Ứng dụng cụ thể đoạn code bạn hỏi)
+void ST7789_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+    // Cài đặt địa chỉ cột (Column Address Set)
+    ST7789_SendCommand(0x2A);
+    ST7789_SendData(x0 >> 8);
+    ST7789_SendData(x0 & 0xFF);
+    ST7789_SendData(x1 >> 8);
+    ST7789_SendData(x1 & 0xFF);
+
+    // Cài đặt địa chỉ hàng (Row Address Set)
+    ST7789_SendCommand(0x2B);
+    ST7789_SendData(y0 >> 8);
+    ST7789_SendData(y0 & 0xFF);
+    ST7789_SendData(y1 >> 8);
+    ST7789_SendData(y1 & 0xFF);
+
+    // Lệnh chuẩn bị ghi RAM (Memory Write) - Ngay sau lệnh này là đẩy Data Pixel
+    ST7789_SendCommand(0x2C);
+}
 
 //void ILI9341_SendCommand(uint8_t cmd) {
 //    ILI9341_DC_CMD();       // Kéo DC xuống mức 0

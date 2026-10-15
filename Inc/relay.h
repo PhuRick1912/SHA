@@ -11,8 +11,6 @@
 #include "stm32f1xx.h"
 #include "stdbool.h"
 
-
-
 #define RELAY_PIN 8
 
 typedef enum {
@@ -20,9 +18,9 @@ typedef enum {
     RELAY_ON  = 1
 } RelayState_t;
 
+extern volatile bool flag_relay_changed;//relay change
+extern volatile RelayState_t current_relay_state;//relay state
 
-extern volatile bool flag_relay_changed;
-extern volatile RelayState_t current_relay_state;
 void relay_driver_init(void);
 void relay_set_state(RelayState_t state);
 

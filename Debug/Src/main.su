@@ -1,2 +1,2 @@
-../Src/main.c:27:5:main	16	static
-../Src/main.c:123:6:SystemClock_Config_72MHz	4	static
+../Src/main.c:15:5:main	16	static
+../Src/main.c:74:6:SystemClock_Config_72MHz	4	static
