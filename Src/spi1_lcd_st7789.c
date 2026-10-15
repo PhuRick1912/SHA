@@ -190,7 +190,86 @@ void ST7789_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
     // Lệnh chuẩn bị ghi RAM (Memory Write) - Ngay sau lệnh này là đẩy Data Pixel
     ST7789_SendCommand(0x2C);
 }
+void ST7789_FillColor(uint16_t color) {
+    uint8_t color_high = color >> 8;
+    uint8_t color_low = color & 0xFF;
 
+    // Buffer 4800 Bytes <=> 2400 pixel
+    uint8_t dma_buffer[4800];
+    for(uint16_t i = 0; i < 4800; i += 2) {
+        dma_buffer[i] = color_high;
+        dma_buffer[i+1] = color_low;
+    }
+
+    ST7789_SetWindow(0, 0, 239, 239);
+
+    ST7789_DC_DATA();
+    ST7789_CS_SELECT();
+
+    // Vòng lặp DMA
+    for(uint16_t chunk = 0; chunk < 24; chunk++) {
+        spi1_dma_transmit(dma_buffer, 4800);
+        spi1_dma_wait_complete();
+    }
+
+    ST7789_CS_DESELECT();
+}
+void ST7789_TestRedSquare50x50(void) {
+    uint16_t color = 0xF800; // Mã màu Đỏ (Red) trong định dạng RGB565
+    uint8_t color_high = color >> 8;
+    uint8_t color_low = color & 0xFF;
+
+    // Buffer chứa 1 hàng ngang của hình vuông (50 pixel = 100 Bytes)
+    uint8_t row_buffer[100];
+    for(uint16_t i = 0; i < 100; i += 2) {
+        row_buffer[i] = color_high;
+        row_buffer[i+1] = color_low;
+    }
+
+    // Khoanh vùng khung vẽ: Góc trên cùng bên trái
+    // Từ tọa độ x=0..49 (50 pixel), y=0..49 (50 pixel)
+    ST7789_SetWindow(0, 0, 49, 49);
+
+    ST7789_DC_DATA();
+    ST7789_CS_SELECT();
+
+    // Bắn buffer 1 hàng ngang xuống màn hình lặp lại 50 lần để tạo thành hình vuông
+    for(uint16_t row = 0; row < 50; row++) {
+        spi1_dma_transmit(row_buffer, 100);
+        spi1_dma_wait_complete();
+    }
+
+    ST7789_CS_DESELECT();
+}
+void ST7789_DrawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint8_t *img_data) {
+    uint32_t total_bytes = w * h * 2; // Kích thước tổng (RGB565 = 2 bytes/pixel)
+    uint32_t bytes_sent = 0;
+    uint16_t chunk_size;
+
+    // 1. Khoanh vùng địa chỉ RAM hiển thị trên LCD
+    ST7789_SetWindow(x, y, x + w - 1, y + h - 1);
+
+    // 2. Chuyển chân DC sang chế độ truyền Data
+    ST7789_DC_DATA();
+    ST7789_CS_SELECT();
+
+    // 3. Truyền qua DMA với Chunk max = 65000 bytes
+    while (total_bytes > 0) {
+        chunk_size = (total_bytes > 65000) ? 65000 : total_bytes;
+
+        // Kích hoạt DMA cho chunk hiện tại
+        spi1_dma_transmit((uint8_t*)&img_data[bytes_sent], chunk_size);
+
+        // Chờ Hardware hoàn tất (DMA -> SPI -> Vật lý)
+        spi1_dma_wait_complete();
+
+        bytes_sent += chunk_size;
+        total_bytes -= chunk_size;
+    }
+
+    // 4. Trả CS lên mức cao
+    ST7789_CS_DESELECT();
+}
 //void ILI9341_SendCommand(uint8_t cmd) {
 //    ILI9341_DC_CMD();       // Kéo DC xuống mức 0
 //    ILI9341_CS_SELECT();    // Kéo CS xuống mức 0

@@ -1,5 +1,6 @@
 "./Src/esp8266_mqtt.o"
 "./Src/fsm.o"
+"./Src/image.o"
 "./Src/main.o"
 "./Src/relay.o"
 "./Src/sensor.o"

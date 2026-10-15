@@ -1,55 +1,69 @@
 #include "sensor.h"
 #include "timer.h"
 
-#define DEBOUNCE_TIME_MS 30U
-
-static volatile bool state_door = false;
+static volatile bool state_door = false; // false = Đóng, true = Mở
 static volatile bool state_ir = false;
-static volatile uint32_t last_door_irq_tick = 0;
+
+static volatile uint32_t last_button_press_time = 0;
+#define DEBOUNCE_DELAY_MS 200 // 200ms chống nhiễu
 
 void sensor_exti_init(void) {
-    __disable_irq();
+	__disable_irq();
 
-    RCC->APB2ENR |= GPIOAEN | AFIOEN;
+	RCC->APB2ENR |= (1U << 2) | (1U << 0); // GPIOAEN | AFIOEN
 
-    GPIOA->CRL &= ~((0xFU << (0 * 4)) | (0xFU << (1 * 4)));
+	GPIOA->CRL &= ~((0xFU << (0 * 4)) | (0xFU << (1 * 4)));
+
+    // Cấu hình PA0 (Nút nhấn), PA1 (IR) là Input Pull-up
     GPIOA->CRL |=  ((0x8U << (0 * 4)) | (0x8U << (1 * 4)));
-    GPIOA->ODR |= (1U << 0) | (1U << 1); // Pull-up PA0, PA1
 
-    // Đồng bộ trạng thái vật lý ban đầu ngay khi cấp nguồn
-    state_door = (GPIOA->IDR & (1U << 0)) ? true : false;
-    state_ir   = ((GPIOA->IDR & (1U << 1)) == 0) ? true : false;
+	GPIOA->ODR |= (1U << 0) | (1U << 1); // Kéo lên VCC
 
-    AFIO->EXTICR[0] &= ~((0xFU << (0 * 4)) | (0xFU << (1 * 4)));
+	AFIO->EXTICR[0] &= ~((0xFU << (0 * 4)) | (0xFU << (1 * 4)));
 
-    EXTI->IMR  |= (1U << 0) | (1U << 1);
-    EXTI->FTSR |= (1U << 0) | (1U << 1);
-    EXTI->RTSR |= (1U << 0) | (1U << 1);
+	EXTI->IMR |= (1U<<0) | (1U<<1);
 
-    NVIC_SetPriority(EXTI0_IRQn, 1);
-    NVIC_SetPriority(EXTI1_IRQn, 2);
-    NVIC_EnableIRQ(EXTI0_IRQn);
-    NVIC_EnableIRQ(EXTI1_IRQn);
+	EXTI->FTSR |= (1U << 0);
+	EXTI->RTSR &= ~(1U << 0);
 
-    __enable_irq();
+
+	EXTI->FTSR |= (1U << 1);
+	EXTI->RTSR |= (1U << 1);
+
+	NVIC_SetPriority(EXTI0_IRQn, 1);
+	NVIC_SetPriority(EXTI1_IRQn, 2);
+	NVIC_EnableIRQ(EXTI0_IRQn);
+	NVIC_EnableIRQ(EXTI1_IRQn);
+
+	__enable_irq();
 }
 
+// Hàm ngắt PA0 (Nút nhấn mô phỏng Cửa)
 void EXTI0_IRQHandler(void) {
     if (EXTI->PR & (1U << 0)) {
-        EXTI->PR = (1U << 0); // Ghi 1 để xóa cờ (không dùng |= tránh xóa nhầm cờ khác)
+        EXTI->PR |= (1U << 0); // Xóa cờ ngắt
 
-        uint32_t now = Get_System_Tick();
-        if ((now - last_door_irq_tick) >= DEBOUNCE_TIME_MS) {
-            state_door = (GPIOA->IDR & (1U << 0)) ? true : false;
-            last_door_irq_tick = now;
+        uint32_t current_time = Get_System_Tick();
+
+        if ((current_time - last_button_press_time) > DEBOUNCE_DELAY_MS) {
+            last_button_press_time = current_time;
+
+            state_door = !state_door;
+
         }
     }
 }
 
+// Hàm ngắt PA1 (Cảm biến IR)
 void EXTI1_IRQHandler(void) {
     if (EXTI->PR & (1U << 1)) {
-        EXTI->PR = (1U << 1); // Ghi thẳng 1 vào thanh ghi PR (rc_w1)
-        state_ir = ((GPIOA->IDR & (1U << 1)) == 0) ? true : false;
+        EXTI->PR |= (1U << 1);
+
+        if ((GPIOA->IDR & (1U << 1)) == 0) {
+            state_ir = true; // mức 0 -> Có người
+        } else {
+            state_ir = false;
+        }
     }
 }
 

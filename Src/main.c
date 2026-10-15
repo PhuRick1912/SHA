@@ -10,6 +10,8 @@
 #define MAGNETIC_SENSOR (1U << 0)
 #define IR_SENSOR (1U << 1)
 
+extern const uint8_t image_map[];
+
 void SystemClock_Config_72MHz(void);
 
 int main(void) {
@@ -30,9 +32,11 @@ int main(void) {
 
 	ST7789_Init();
 
-	//ST7789_FillColor(0xFFFF);
+	ST7789_FillColor(0xFFFF);
 
-	//ST7789_TestRedSquare50x50();
+	ST7789_TestRedSquare50x50();
+
+	ST7789_DrawImage(110, 110, 20, 20, image_map);
 
 	RCC->APB2ENR |= RCC_APB2ENR_IOPCEN; // Cấp xung clock cho Port C
 

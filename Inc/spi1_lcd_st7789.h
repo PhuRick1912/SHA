@@ -20,6 +20,10 @@ void ST7789_Init(void);
 void ST7789_SendCommand(uint8_t cmd);
 void ST7789_SendData(uint8_t data);
 void ST7789_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+void ST7789_FillColor(uint16_t color);
+void ST7789_TestRedSquare50x50(void);
+void ST7789_DrawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint8_t *img_data);
+
 #define ILI9341_CS_SELECT()      (GPIOA->BRR  = (1U << 4))
 #define ILI9341_CS_DESELECT()    (GPIOA->BSRR = (1U << 4))
 
@@ -31,8 +35,6 @@ void ST7789_SetWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
 
 #define ILI9341_BLK_ON()         (GPIOB->BSRR = (1U << 0))
 #define ILI9341_BLK_OFF()        (GPIOB->BRR  = (1U << 0))
-
-// --- Khai báo hàm ---
 
 
 void spi1_gpio_init(void);
