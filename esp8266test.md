@@ -79,7 +79,7 @@ void setup() {
   
   WiFiManager wm;
   
-  // Xóa cấu hình cũ để test (Bỏ comment khi cần debug)
+  // Xoa khi test 
   // wm.resetSettings();
 
   wm.setDebugOutput(false);
@@ -87,11 +87,10 @@ void setup() {
   bool res = wm.autoConnect("IoT_Product_Setup");
 
   if(!res) {
-    // Timeout hoặc cấu hình lỗi -> Reset để thử lại
+    
     ESP.restart();
   }
 
-  // Khi vượt qua dòng trên -> ESP đã vào được WiFi nhà người dùng
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
 }
