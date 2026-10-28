@@ -2,12 +2,15 @@
 #include <PubSubClient.h>
 #include <WiFiManager.h>
 
-const char* mqtt_server = "test.mosquitto.org";
+// --- CẤU HÌNH MQTT BROKER ---
+const char* mqtt_server   = "broker.emqx.io"; 
+const int   mqtt_port     = 1883;                      
 
 // --- CẤU HÌNH TOPIC ---
 const char* topic_sub       = "bk_phu/lab/commands";
 const char* topic_pub_relay = "bk_phu/lab/status";
 const char* topic_pub_count = "bk_phu/lab/count";
+const char* topic_pub_weather = "bk_phu/lab/weather";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -23,6 +26,7 @@ boolean reconnectMQTT() {
   char clientId[20];
   snprintf(clientId, sizeof(clientId), "ESP-%04X", random(0xffff));
   
+  // Chỉ kết nối với clientId, không dùng user/password
   if (client.connect(clientId)) {
     client.subscribe(topic_sub);
     return true;
@@ -78,20 +82,14 @@ void setup() {
   delay(10); 
   
   WiFiManager wm;
-  
-  // Xoa khi test 
-  // wm.resetSettings();
-
   wm.setDebugOutput(false);
 
   bool res = wm.autoConnect("IoT_Product_Setup");
-
   if(!res) {
-    
     ESP.restart();
   }
 
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
 }
 
