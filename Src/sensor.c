@@ -38,7 +38,7 @@ void sensor_exti_init(void) {
 	__enable_irq();
 }
 
-// Hàm ngắt PA0 (Nút nhấn mô phỏng Cửa)
+// Hàm ngắt PA0 
 void EXTI0_IRQHandler(void) {
     if (EXTI->PR & (1U << 0)) {
         EXTI->PR |= (1U << 0); // Xóa cờ ngắt
@@ -59,8 +59,8 @@ void EXTI1_IRQHandler(void) {
     if (EXTI->PR & (1U << 1)) {
         EXTI->PR |= (1U << 1);
 
-        if ((GPIOA->IDR & (1U << 1)) == 0) {
-            state_ir = true; // mức 0 -> Có người
+        if ((GPIOA->IDR & (1U << 1)) == 1) {
+            state_ir = true; // mức 1 -> Có người
         } else {
             state_ir = false;
         }
