@@ -2,7 +2,22 @@
 
 #define GPIOBEN (1U<<3)
 #define SPI2EN	(1U<<14)
+/* --- SPI CR1 Bits --- */
+#define SPI_CR1_CPHA        (1U << 0)
+#define SPI_CR1_CPOL        (1U << 1)
+#define SPI_CR1_MSTR        (1U << 2)
+#define SPI_CR1_BR_DIV4     (1U << 3)    /* BR[2:0] = 001 => fPCLK/4 = 9MHz */
+#define SPI_CR1_SPE         (1U << 6)
+#define SPI_CR1_LSBFIRST    (1U << 7)
+#define SPI_CR1_SSI         (1U << 8)
+#define SPI_CR1_SSM         (1U << 9)
+#define SPI_CR1_RXONLY      (1U << 10)
+#define SPI_CR1_DFF         (1U << 11)
 
+/* --- SPI SR Bits --- */
+#define SPI_SR_RXNE         (1U << 0)
+#define SPI_SR_TXE          (1U << 1)
+#define SPI_SR_BSY          (1U << 7)*/
 
 
 void w25q64_init (void){
