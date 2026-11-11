@@ -12,11 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-
-
 //thong so chip 
-
-
 #define W25Q64_PAGE_SIZE          256           /* 1 Page = 256 bytes                */
 #define W25Q64_SECTOR_SIZE        4096          /* 1 Sector = 4KB = 16 pages         */
 #define W25Q64_BLOCK_32K_SIZE     32768         /* 1 Block 32KB                      */
@@ -28,6 +24,7 @@
 /*
  BẢNG LỆNH SPI CỦA W25Q64 (INSTRUCTION SET)
 /* --- Lệnh đọc/ghi trạng thái --- */
+
 #define W25Q64_CMD_WRITE_ENABLE         0x06  /* Cho phép ghi                   */
 #define W25Q64_CMD_WRITE_DISABLE        0x04  /* Cấm ghi                        */
 #define W25Q64_CMD_READ_STATUS_REG1     0x05  /* Đọc Status Register 1          */
@@ -79,10 +76,36 @@
 
 
 
+/* --- Khởi tạo --- */
+void W25Q64_Init(void);                 /* Khởi tạo SPI2 + GPIO */
 
+/* --- Nhận dạng chip --- */
+uint32_t W25Q64_ReadJEDEC_ID(void);     /* Trả về 3 byte: Manufacturer + Type + Capacity (Kỳ vọng: 0xEF4017) */
+uint16_t W25Q64_ReadDeviceID(void);     /* Trả về Manufacturer + DeviceID */
 
+/* --- Đọc dữ liệu --- */
+void W25Q64_ReadData(uint32_t address, uint8_t *buffer, uint32_t length);
+void W25Q64_FastRead(uint32_t address, uint8_t *buffer, uint32_t length);
 
+/* --- Ghi dữ liệu --- */
+void W25Q64_WritePage(uint32_t address, const uint8_t *data, uint16_t length);
+void W25Q64_WriteData(uint32_t address, const uint8_t *data, uint32_t length);
 
+/* --- Xóa --- */
+void W25Q64_EraseSector(uint32_t sector_address);    /* Xóa 4KB Sector   */
+void W25Q64_EraseBlock32K(uint32_t block_address);   /* Xóa 32KB Block   */
+void W25Q64_EraseBlock64K(uint32_t block_address);   /* Xóa 64KB Block   */
+void W25Q64_EraseChip(void);                         /* Xóa toàn bộ chip */
+
+/* --- Trạng thái --- */
+void W25Q64_WriteEnable(void);
+void W25Q64_WriteDisable(void);
+void W25Q64_WaitBusy(void);
+uint8_t W25Q64_ReadStatusReg1(void);
+
+/* --- Nguồn --- */
+void W25Q64_PowerDown(void);
+void W25Q64_WakeUp(void);
 
 void W25Q64_Init(void);
 
